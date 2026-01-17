@@ -1,0 +1,27 @@
+=== CREDENCIALES DE ACCESO (LOGIN) ===
+Usuario: admin
+Contraseña: admin
+
+(Estas son las credenciales temporales para pruebas. Más adelante se crearán usuarios reales).
+
+=== EJEMPLO PARA EL FORMULARIO DEL PORTAL ===
+
+1. DATOS DE LA EMPRESA:
+   - RUT Empresa: 76.123.456-7  (Sin puntos ni guión también debería funcionar si lo programamos así, pero idealmente usar formato estándar)
+   - Clave SII: password123     (La clave real del SII de esa empresa)
+   - Mes: Junio                 (El mes que quieres procesar)
+   - Año: 2025
+   - Correo de Destino: tu_correo@ejemplo.com (Aquí llegará el PDF final)
+
+2. TRABAJADORES (Si marcas "Sí"):
+   - Fila 1:
+     * Nombre: Juan Pérez
+     * RUT: 15.123.456-7
+     * Monto: 500000
+   - Fila 2:
+     * Nombre: María González
+     * RUT: 16.789.012-3
+     * Monto: 650000
+
+=== NOTA ===
+Por ahora, al hacer clic en "GENERAR", el sistema simulará el proceso (verás la barra de carga y los mensajes de estado) para verificar que el flujo visual funciona. No se conectará al SII real hasta que activemos el "sii_connector.py" en el servidor.
