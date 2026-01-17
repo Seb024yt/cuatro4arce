@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from typing import Dict
 
 from .models import LoginRequest, ProcessRequest
-# from .sii_connector import run_sii_process # Will implement later
+from .sii_connector import run_sii_process
 
 app = FastAPI()
 
@@ -43,31 +43,11 @@ async def login(creds: LoginRequest):
 async def portal(request: Request):
     return templates.TemplateResponse("portal.html", {"request": request})
 
-def process_job(job_id: str, data: ProcessRequest):
-    jobs[job_id]["state"] = "processing"
-    jobs[job_id]["status"] = "Validando datos..."
-    time.sleep(2)
-    
-    jobs[job_id]["status"] = "Ingresando al SII..."
-    time.sleep(2)
-    
-    jobs[job_id]["status"] = "Descargando Registro de Compras y Ventas..."
-    time.sleep(2)
-    
-    jobs[job_id]["status"] = "Descargando Boletas de Honorarios..."
-    time.sleep(2)
-    
-    jobs[job_id]["status"] = "Buscando Remanente F29..."
-    time.sleep(2)
-    
-    jobs[job_id]["status"] = "Generando PDF final..."
-    time.sleep(2)
-    
-    jobs[job_id]["status"] = "Enviando correo..."
-    time.sleep(1)
-    
-    jobs[job_id]["state"] = "completed"
-    jobs[job_id]["status"] = "Finalizado"
+def update_job_status(job_id: str, message: str, state: str = None):
+    if job_id in jobs:
+        jobs[job_id]["status"] = message
+        if state:
+            jobs[job_id]["state"] = state
 
 @app.post("/api/process")
 async def start_process(data: ProcessRequest, background_tasks: BackgroundTasks):
@@ -78,9 +58,11 @@ async def start_process(data: ProcessRequest, background_tasks: BackgroundTasks)
         "created_at": time.time()
     }
     
-    # In real implementation, call the actual SII logic
-    # background_tasks.add_task(run_sii_process, job_id, data)
-    background_tasks.add_task(process_job, job_id, data) # Mock for now
+    # Callback wrapper to pass to the sync function
+    def status_callback(msg, state=None):
+        update_job_status(job_id, msg, state)
+        
+    background_tasks.add_task(run_sii_process, job_id, data, status_callback)
     
     return {"job_id": job_id}
 

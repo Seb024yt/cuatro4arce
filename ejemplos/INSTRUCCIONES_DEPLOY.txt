@@ -1,0 +1,17 @@
+INSTRUCCIONES PARA ACTUALIZAR EL VPS MANUALMENTE
+(Si el despliegue automático falla)
+
+1. Conéctate a tu VPS:
+   ssh sebas024@72.61.47.96
+
+2. Ve a la carpeta del proyecto:
+   cd /home/sebas024/htdocs/srv1274145.hstgr.cloud
+
+3. Descarga los últimos cambios de GitHub:
+   git pull origin main
+
+4. Instala las dependencias nuevas (si hay):
+   pip install -r requirements.txt
+
+5. Reinicia el servidor (si está corriendo):
+   (Comando depende de cómo lo estés ejecutando, ej. Ctrl+C y luego uvicorn...)

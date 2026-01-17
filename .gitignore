@@ -3,3 +3,9 @@ wp-content/uploads/
 .htaccess
 *.log
 .DS_Store
+vps_key
+vps_key.pub
+__pycache__/
+downloads/
+venv/
+.env

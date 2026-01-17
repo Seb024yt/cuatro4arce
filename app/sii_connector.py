@@ -1,12 +1,94 @@
 import os
 import time
 import glob
+import shutil
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from .data_processor import consolidate_data
+
+MONTH_MAP = {
+    "enero": ("01", "Enero"),
+    "febrero": ("02", "Febrero"),
+    "marzo": ("03", "Marzo"),
+    "abril": ("04", "Abril"),
+    "mayo": ("05", "Mayo"),
+    "junio": ("06", "Junio"),
+    "julio": ("07", "Julio"),
+    "agosto": ("08", "Agosto"),
+    "septiembre": ("09", "Septiembre"),
+    "octubre": ("10", "Octubre"),
+    "noviembre": ("11", "Noviembre"),
+    "diciembre": ("12", "Diciembre")
+}
+
+MONTH_ORDER = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+
+def run_sii_process(job_id, data, update_status_func):
+    """
+    Orchestrates the SII process: Login -> Loop Months -> Download -> Consolidate
+    """
+    download_dir = os.path.join(os.getcwd(), "downloads", job_id)
+    automator = None
+    
+    try:
+        update_status_func("Iniciando navegador...")
+        automator = SIIAutomator(download_dir)
+        
+        # 1. Login
+        update_status_func("Iniciando sesión en SII...")
+        if not automator.login(data.rutEmpresa, data.claveSII):
+            update_status_func("Error: Credenciales inválidas o fallo en login", "failed")
+            return
+
+        # 2. Iterate Months
+        target_month_idx = MONTH_ORDER.index(data.mes.lower())
+        months_to_process = MONTH_ORDER[:target_month_idx + 1]
+        
+        for m_name in months_to_process:
+            m_code, m_display = MONTH_MAP[m_name]
+            update_status_func(f"Descargando datos de {m_display} {data.anio}...")
+            
+            # Download RCV
+            if not automator.get_rcv(m_code, data.anio):
+                print(f"Warning: Could not get RCV for {m_name}")
+                
+            # Download Honorarios
+            if not automator.get_honorarios(m_display, data.anio):
+                print(f"Warning: Could not get Honorarios for {m_name}")
+                
+            # Sleep slightly to avoid rate limiting
+            time.sleep(1)
+
+        # 3. Consolidate
+        update_status_func("Consolidando información y generando Excel...")
+        output_file = os.path.join(os.getcwd(), "static", f"Planilla_{job_id}.xlsx")
+        
+        # Ensure static dir exists
+        os.makedirs(os.path.join(os.getcwd(), "static"), exist_ok=True)
+        
+        consolidate_data(download_dir, output_file)
+        
+        # 4. Finish
+        update_status_func("Finalizado. Enviando correo...", "completed")
+        
+        # (Optional) Email sending logic would go here
+        
+    except Exception as e:
+        print(f"Process Error: {e}")
+        update_status_func(f"Error inesperado: {str(e)}", "failed")
+    finally:
+        if automator:
+            automator.close()
+        # Cleanup downloads
+        if os.path.exists(download_dir):
+            try:
+                shutil.rmtree(download_dir)
+            except:
+                pass
 
 class SIIAutomator:
     def __init__(self, download_dir):
