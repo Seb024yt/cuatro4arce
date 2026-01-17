@@ -1,0 +1,147 @@
+import os
+import time
+import glob
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
+class SIIAutomator:
+    def __init__(self, download_dir):
+        self.download_dir = download_dir
+        if not os.path.exists(download_dir):
+            os.makedirs(download_dir)
+            
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless") # Run in background
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--window-size=1920,1080")
+        
+        prefs = {
+            "download.default_directory": download_dir,
+            "download.prompt_for_download": False,
+            "download.directory_upgrade": True,
+            "safebrowsing.enabled": True
+        }
+        options.add_experimental_option("prefs", prefs)
+        
+        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        self.wait = WebDriverWait(self.driver, 20)
+
+    def login(self, rut, clave):
+        try:
+            print(f"Logging in with RUT: {rut}")
+            url = "https://zeusr.sii.cl//AUT2000/InicioAutenticacion/IngresoRutClave.html?https://misiir.sii.cl/cgi_misii/siihome.cgi"
+            self.driver.get(url)
+            
+            rut_input = self.wait.until(EC.presence_of_element_located((By.ID, "rutcntr")))
+            rut_input.clear()
+            rut_input.send_keys(rut)
+            
+            clave_input = self.driver.find_element(By.ID, "clave")
+            clave_input.clear()
+            clave_input.send_keys(clave)
+            
+            self.driver.find_element(By.ID, "bt_ingresar").click()
+            
+            # Simple check if login failed (alert or staying on same page)
+            time.sleep(2)
+            if "IngresoRutClave" in self.driver.current_url:
+                # Check for error message
+                try:
+                    error = self.driver.find_element(By.ID, "mensajeError").text
+                    print(f"Login error: {error}")
+                except:
+                    pass
+                return False
+                
+            return True
+        except Exception as e:
+            print(f"Login exception: {e}")
+            return False
+
+    def get_rcv(self, month, year):
+        # month should be '01', '02', etc.
+        try:
+            print(f"Downloading RCV for {month}/{year}")
+            self.driver.get("https://www4.sii.cl/consdcvinternetui/")
+            
+            # Select Month
+            period_mes = self.wait.until(EC.element_to_be_clickable((By.ID, "periodoMes")))
+            period_mes.click()
+            self.driver.find_element(By.XPATH, f"//select[@id='periodoMes']/option[@value='{month}']").click()
+            
+            # Select Year (Angular model usually needs send_keys to the input or select)
+            # VBA used xpath //select[@ng-model='periodoAnho']
+            try:
+                period_anio = self.driver.find_element(By.XPATH, "//select[@ng-model='periodoAnho']")
+                period_anio.send_keys(str(year))
+            except:
+                # Sometimes it's a div or needs clicking
+                pass
+
+            # Click Consultar
+            consultar_btn = self.driver.find_element(By.XPATH, "//button[contains(text(), 'Consultar')]")
+            consultar_btn.click()
+            time.sleep(2)
+
+            # Download Compras
+            try:
+                dl_btn = self.driver.find_element(By.XPATH, "//button[contains(text(), 'Descargar Detalles')]")
+                dl_btn.click()
+                time.sleep(3) # Wait for download
+            except:
+                print("No Compras details button found (maybe no data)")
+
+            # Switch to Ventas
+            self.driver.find_element(By.XPATH, "//a[@ui-sref='venta']").click()
+            time.sleep(1)
+            
+            # Download Ventas
+            try:
+                dl_btn = self.driver.find_element(By.XPATH, "//button[contains(text(), 'Descargar Detalles')]")
+                dl_btn.click()
+                time.sleep(3)
+            except:
+                print("No Ventas details button found")
+                
+            return True
+        except Exception as e:
+            print(f"Error getting RCV: {e}")
+            return False
+
+    def get_honorarios(self, month_name, year):
+        # month_name: "Enero", "Febrero", etc.
+        try:
+            print(f"Downloading Honorarios for {month_name} {year}")
+            self.driver.get("https://loa.sii.cl/cgi_IMT/TMBCOC_MenuConsultasContribRec.cgi")
+            
+            # Select Year
+            # Note: VBA sets year in sheet but URL/Form might rely on current year or input
+            # The VBA only selects Month in 'cbmesinformemensual'. Year might be implicit or in another field.
+            # Assuming year selection if available, otherwise just month.
+            
+            select_mes = self.wait.until(EC.presence_of_element_located((By.NAME, "cbmesinformemensual")))
+            select_mes.send_keys(month_name)
+            
+            self.driver.find_element(By.ID, "cmdconsultar1").click()
+            time.sleep(2)
+            
+            # Download
+            try:
+                dl_btn = self.driver.find_element(By.XPATH, "//input[@value='Ver informe como planilla electrónica']")
+                dl_btn.click()
+                time.sleep(3)
+            except:
+                print("No Honorarios download button found")
+                
+            return True
+        except Exception as e:
+            print(f"Error getting Honorarios: {e}")
+            return False
+
+    def close(self):
+        self.driver.quit()
