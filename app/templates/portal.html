@@ -128,6 +128,12 @@
             width: 0%;
             transition: width 0.5s ease;
         }
+        .progress-bar-fill.success {
+            background: #2ecc71; /* Green */
+        }
+        .progress-bar-fill.error {
+            background: #e74c3c; /* Red */
+        }
         .status-text { font-weight: 500; color: #666; }
     </style>
 </head>
@@ -311,6 +317,12 @@
             // UI Update
             submitBtn.style.display = 'none'; // Hide button to prevent double submit
             progressContainer.style.display = 'block';
+            statusText.textContent = "Iniciando..."; // Reset status
+            statusText.style.color = "#666"; // Reset color
+            progressBar.classList.remove('success', 'error'); // Reset classes
+            progressBar.style.width = '0%';
+            progress = 0;
+            isProcessing = true;
             simulateProgress();
 
             try {
@@ -328,13 +340,20 @@
 
             } catch (err) {
                 console.error(err);
-                statusText.textContent = "Error al iniciar el proceso.";
-                statusText.style.color = "red";
+                isProcessing = false;
+                progressBar.classList.add('error');
+                setTimeout(() => {
+                    statusText.textContent = "Error al iniciar el proceso.";
+                    statusText.style.color = "red";
+                }, 2000);
             }
         });
 
         let progress = 0;
+        let isProcessing = false;
+
         function simulateProgress() {
+            if (!isProcessing) return;
             if (progress < 90) {
                 // Slow down as it gets higher
                 let increment = Math.max(0.5, (90 - progress) / 50);
@@ -351,24 +370,39 @@
                 const res = await fetch(`/api/status/${jobId}`);
                 const data = await res.json();
                 
-                statusText.textContent = data.status;
-                
                 if (data.state === 'completed') {
+                    isProcessing = false;
                     progress = 100;
                     progressBar.style.width = '100%';
-                    statusText.textContent = "¡Proceso Finalizado! Enviando correo...";
+                    progressBar.classList.add('success');
+                    
+                    // Delay message to let user see 100% bar
                     setTimeout(() => {
-                         alert("El proceso ha finalizado y el archivo ha sido enviado.");
-                         window.location.reload();
-                    }, 1000);
+                        statusText.textContent = "¡Proceso Finalizado! Enviando correo...";
+                        setTimeout(() => {
+                             alert("El proceso ha finalizado y el archivo ha sido enviado.");
+                             window.location.reload();
+                        }, 1000);
+                    }, 600);
                 } else if (data.state === 'failed') {
-                    statusText.textContent = "Error: " + data.error;
-                    statusText.style.color = "red";
+                    isProcessing = false;
+                    progressBar.classList.add('error');
+                    // Stop updating text immediately, wait for visual feedback
+                    setTimeout(() => {
+                        statusText.textContent = "Error: " + data.error;
+                        statusText.style.color = "red";
+                    }, 2000); // 2 seconds delay
                 } else {
+                    // Normal processing
+                    statusText.textContent = data.status;
                     setTimeout(pollStatus, 2000);
                 }
             } catch (err) {
                 console.error(err);
+                isProcessing = false;
+                progressBar.classList.add('error');
+                statusText.textContent = "Error de conexión con el servidor.";
+                statusText.style.color = "red";
             }
         }
     </script>
