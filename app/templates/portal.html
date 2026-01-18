@@ -178,6 +178,9 @@
                         <label>Año</label>
                         <input type="number" id="anio" value="2025" required>
                     </div>
+                    <div class="form-group full-width" style="text-align: right;">
+                        <button type="button" id="btnCurrentDate" style="background: #667eea; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Fecha Actual</button>
+                    </div>
                     <div class="form-group full-width">
                         <label>Correo de Destino</label>
                         <input type="email" id="correo" placeholder="correo@ejemplo.com" required>
@@ -185,7 +188,7 @@
                 </div>
 
                 <div class="workers-section">
-                    <label>¿Tiene trabajadores?</label>
+                    <label>¿Tiene trabajadores con impuesto unico?</label>
                     <div style="margin: 10px 0;">
                         <input type="radio" name="hasWorkers" value="yes" id="workersYes" style="width:auto;"> <label for="workersYes" style="display:inline;">Sí</label>
                         <input type="radio" name="hasWorkers" value="no" id="workersNo" checked style="width:auto; margin-left: 20px;"> <label for="workersNo" style="display:inline;">No</label>
@@ -197,7 +200,7 @@
                                 <tr>
                                     <th>Nombre Trabajador</th>
                                     <th>RUT Trabajador</th>
-                                    <th>Monto</th>
+                                    <th>Monto Impuesto Unico</th>
                                     <th>Acción</th>
                                 </tr>
                             </thead>
@@ -231,12 +234,71 @@
         const progressContainer = document.getElementById('progressContainer');
         const progressBar = document.getElementById('progressBar');
         const statusText = document.getElementById('statusText');
+        const btnCurrentDate = document.getElementById('btnCurrentDate');
+        const mesSelect = document.getElementById('mes');
+        const anioInput = document.getElementById('anio');
 
         // State
         let jobId = null;
+        
+        const MONTHS = [
+            "enero", "febrero", "marzo", "abril", "mayo", "junio", 
+            "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+        ];
 
         // Event Listeners
         form.addEventListener('input', validateForm);
+        anioInput.addEventListener('input', validateMonths);
+        
+        btnCurrentDate.addEventListener('click', () => {
+            const now = new Date();
+            const currentMonthIndex = now.getMonth(); // 0-11
+            const currentYear = now.getFullYear();
+            
+            anioInput.value = currentYear;
+            mesSelect.value = MONTHS[currentMonthIndex];
+            
+            validateMonths();
+            validateForm();
+        });
+
+        function validateMonths() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonthIndex = now.getMonth();
+            
+            const selectedYear = parseInt(anioInput.value);
+            const options = mesSelect.querySelectorAll('option');
+            
+            options.forEach(opt => {
+                if (!opt.value) return; // Skip placeholder
+                const optMonthIndex = MONTHS.indexOf(opt.value);
+                
+                if (selectedYear > currentYear) {
+                    // Future year: Disable all
+                    opt.disabled = true;
+                } else if (selectedYear === currentYear) {
+                    // Current year: Disable future months
+                    if (optMonthIndex > currentMonthIndex) {
+                        opt.disabled = true;
+                    } else {
+                        opt.disabled = false;
+                    }
+                } else {
+                    // Past year: Enable all
+                    opt.disabled = false;
+                }
+            });
+            
+            // If currently selected month is disabled, reset selection
+            const selectedOpt = mesSelect.options[mesSelect.selectedIndex];
+            if (selectedOpt && selectedOpt.disabled) {
+                mesSelect.value = "";
+            }
+        }
+        
+        // Run validation on load
+        validateMonths();
         
         workersRadio.forEach(radio => {
             radio.addEventListener('change', (e) => {
