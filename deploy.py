@@ -24,8 +24,9 @@ def deploy():
         commands = [
             f"cd {REMOTE_PATH}",
             "git pull origin main",
-            "python3 -m venv venv",
-            "./venv/bin/pip install -r requirements.txt"
+            "curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py",
+            "python3 get-pip.py --user",
+            "python3 -m pip install -r requirements.txt --user"
         ]
         
         full_command = " && ".join(commands)
