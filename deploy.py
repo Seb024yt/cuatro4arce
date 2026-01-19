@@ -25,8 +25,8 @@ def deploy():
             f"cd {REMOTE_PATH}",
             "git pull origin main",
             "curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py",
-            "python3 get-pip.py --user",
-            "python3 -m pip install -r requirements.txt --user"
+            "python3 get-pip.py --break-system-packages --user",
+            "python3 -m pip install -r requirements.txt --break-system-packages --user"
         ]
         
         full_command = " && ".join(commands)

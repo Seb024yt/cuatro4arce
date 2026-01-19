@@ -45,10 +45,13 @@ async def dashboard_view(request: Request):
     return templates.TemplateResponse("dashboard.html", {"request": request})
 
 @app.get("/portal", response_class=HTMLResponse)
-async def portal(request: Request, company_id: int):
-    # In a real app we should validate if user owns this company here too 
-    # but we will do it in the API mostly.
-    return templates.TemplateResponse("portal.html", {"request": request, "company_id": company_id})
+async def portal(request: Request, company_id: int, session: Session = Depends(get_session)):
+    company = session.get(Company, company_id)
+    if not company:
+        # Fallback or error, for now just pass None or redirect
+        return templates.TemplateResponse("dashboard.html", {"request": request})
+        
+    return templates.TemplateResponse("portal.html", {"request": request, "company": company})
 
 
 # --- Auth API ---

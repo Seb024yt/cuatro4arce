@@ -150,9 +150,22 @@
         <div class="card">
             <h2>Generar Planilla de Impuesto</h2>
             <form id="mainForm">
-                <input type="hidden" id="companyId" value="{{ company_id }}">
+                <input type="hidden" id="companyId" value="{{ company.id }}">
                 <div class="form-grid">
-                    <!-- RUT y Clave ya no son necesarios visiblemente -->
+                    <div class="form-group">
+                        <label>RUT Empresa</label>
+                        <div style="position: relative;">
+                            <input type="password" id="rutEmpresa" value="{{ company.rut }}" readonly style="padding-right: 40px; background-color: #e9ecef; cursor: not-allowed;">
+                            <span onclick="toggleVisibility('rutEmpresa')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none;">👁️</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Clave SII</label>
+                        <div style="position: relative;">
+                            <input type="password" id="claveSII" value="{{ company.clave_sii }}" readonly style="padding-right: 40px; background-color: #e9ecef; cursor: not-allowed;">
+                            <span onclick="toggleVisibility('claveSII')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none;">👁️</span>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label>Mes</label>
                         <select id="mes" required>
@@ -225,6 +238,7 @@
     <script>
         // DOM Elements
         const form = document.getElementById('mainForm');
+        const companyId = document.getElementById('companyId').value;
         const submitBtn = document.getElementById('submitBtn');
         const workersRadio = document.getElementsByName('hasWorkers');
         const workersTableContainer = document.getElementById('workersTableContainer');
@@ -247,6 +261,15 @@
         form.addEventListener('input', validateForm);
         anioInput.addEventListener('input', validateMonths);
         
+        function toggleVisibility(id) {
+            const input = document.getElementById(id);
+            if (input.type === "password") {
+                input.type = "text";
+            } else {
+                input.type = "password";
+            }
+        }
+
         btnCurrentDate.addEventListener('click', () => {
             const now = new Date();
             const currentMonthIndex = now.getMonth(); // 0-11
