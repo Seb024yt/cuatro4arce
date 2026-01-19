@@ -155,14 +155,14 @@
                     <div class="form-group">
                         <label>RUT Empresa</label>
                         <div style="position: relative;">
-                            <input type="password" id="rutEmpresa" value="{{ company.rut }}" readonly style="padding-right: 40px; background-color: #e9ecef; cursor: not-allowed;">
+                            <input type="password" id="rutEmpresa" value="{{ company.rut if company.rut else '' }}" readonly style="padding-right: 40px; background-color: #e9ecef; cursor: not-allowed;">
                             <span onclick="toggleVisibility('rutEmpresa')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none;">👁️</span>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Clave SII</label>
                         <div style="position: relative;">
-                            <input type="password" id="claveSII" value="{{ company.clave_sii }}" readonly style="padding-right: 40px; background-color: #e9ecef; cursor: not-allowed;">
+                            <input type="password" id="claveSII" value="{{ company.clave_sii if company.clave_sii else '' }}" readonly style="padding-right: 40px; background-color: #e9ecef; cursor: not-allowed;">
                             <span onclick="toggleVisibility('claveSII')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none;">👁️</span>
                         </div>
                     </div>
@@ -248,6 +248,12 @@
         const btnCurrentDate = document.getElementById('btnCurrentDate');
         const mesSelect = document.getElementById('mes');
         const anioInput = document.getElementById('anio');
+
+        // Auth
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/';
+        }
 
         // State
         let jobId = null;
@@ -412,10 +418,20 @@
                 // Start Job
                 const res = await fetch('/api/process', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
                     body: JSON.stringify(formData)
                 });
+                if (res.status === 401) {
+                    alert("Sesión expirada. Por favor inicie sesión nuevamente.");
+                    window.location.href = '/';
+                    return;
+                }
                 const data = await res.json();
+                if (!res.ok) throw new Error(data.detail || 'Error desconocido');
+                
                 jobId = data.job_id;
                 
                 // Poll Status

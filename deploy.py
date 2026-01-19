@@ -26,7 +26,9 @@ def deploy():
             "git pull origin main",
             "curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py",
             "python3 get-pip.py --break-system-packages --user",
-            "python3 -m pip install -r requirements.txt --break-system-packages --user"
+            "python3 -m pip install -r requirements.txt --break-system-packages --user",
+            "pkill -f uvicorn || true",  # Kill existing process
+            "nohup python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 > app.log 2>&1 &" # Start new process
         ]
         
         full_command = " && ".join(commands)
@@ -47,9 +49,9 @@ def deploy():
             print(error)
             
         if exit_status == 0:
-            print("\nDeployment successful! ✅")
+            print("\nDeployment successful! [OK]")
         else:
-            print("\nDeployment failed! ❌")
+            print("\nDeployment failed! [X]")
             
         client.close()
         
