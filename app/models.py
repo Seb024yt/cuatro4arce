@@ -62,6 +62,11 @@ class CompanyCreate(BaseModel):
     clave_sii: str
     name: str
 
+class CompanyUpdate(BaseModel):
+    rut: Optional[str] = None
+    clave_sii: Optional[str] = None
+    name: Optional[str] = None
+
 class CompanyRead(BaseModel):
     id: int
     rut: str
