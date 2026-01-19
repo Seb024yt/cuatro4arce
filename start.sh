@@ -10,8 +10,8 @@ pkill -f uvicorn || true
 rm -f app.log
 
 # Start new
-nohup python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 > app.log 2>&1 &
+nohup python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8090 > app.log 2>&1 &
 
-echo "Started uvicorn in background. Checking logs..."
+echo "Started uvicorn in background on port 8090. Checking logs..."
 sleep 2
 cat app.log
