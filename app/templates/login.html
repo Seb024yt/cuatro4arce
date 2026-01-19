@@ -126,14 +126,46 @@
         .footer-links a:hover {
             text-decoration: underline;
         }
+        .google-btn {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #555;
+            transition: all 0.2s;
+        }
+        .google-btn:hover {
+            background-color: #f8f9fa;
+            border-color: #ccc;
+        }
+        .social-login {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="login-header">
-            <h2>Bienvenido</h2>
-            <p>Ingresa a tu cuenta para continuar</p>
+        <h2>Bienvenido</h2>
+        
+        <div class="social-login">
+            <button class="google-btn" onclick="window.location.href='/auth/google'">
+                <span style="font-weight: bold; font-family: 'Google Sans', sans-serif;">G</span> Iniciar con Google
+            </button>
         </div>
+
+        <div style="display: flex; align-items: center; margin: 20px 0; color: #888;">
+            <div style="flex: 1; height: 1px; background: #eee;"></div>
+            <span style="padding: 0 10px; font-size: 0.9rem;">O ingresa con tu cuenta</span>
+            <div style="flex: 1; height: 1px; background: #eee;"></div>
+        </div>
+
         <form id="loginForm">
             <div class="input-group">
                 <label for="username">Usuario</label>

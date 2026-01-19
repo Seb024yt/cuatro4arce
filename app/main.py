@@ -9,7 +9,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
 
-from .models import LoginRequest, ProcessRequest, User, UserCreate, UserRead, Company, CompanyCreate, CompanyRead, Token, UpgradeRequest
+from .models import LoginRequest, ProcessRequest, User, UserCreate, UserRead, Company, CompanyCreate, CompanyRead, Token, UpgradeRequest, OnboardingRequest, CompanyUpdate
 from .sii_connector import run_sii_process
 from .database import create_db_and_tables, get_session, engine
 from .auth import create_access_token, get_password_hash, verify_password, get_current_active_user, ACCESS_TOKEN_EXPIRE_MINUTES
@@ -83,6 +83,97 @@ async def portal(request: Request, company_id: int, session: Session = Depends(g
         
     return templates.TemplateResponse("/app/templates/portal.html", {"request": request, "company": company})
 
+# --- Google Auth Simulation ---
+
+@app.get("/auth/google", response_class=HTMLResponse)
+async def google_auth_view(request: Request):
+    return templates.TemplateResponse("/app/templates/mock_google.html", {"request": request})
+
+@app.get("/auth/google/callback", response_class=HTMLResponse)
+async def google_auth_callback(email: str, request: Request, session: Session = Depends(get_session)):
+    # Check if user exists
+    user = session.exec(select(User).where(User.email == email)).first()
+    is_new = False
+    
+    if not user:
+        # Create new user
+        is_new = True
+        hashed_pw = get_password_hash("temp_google_pass") # Dummy password
+        user = User(
+            email=email, 
+            hashed_password=hashed_pw,
+            is_active=True,
+            payment_status="pending",
+            max_companies=1 # Start with 1 slot
+        )
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+    
+    # Create token
+    access_token = create_access_token(data={"sub": user.email})
+    
+    # Store token in cookie/localstorage via a small script in the response
+    # Or redirect to a page that sets it.
+    # We will return a small HTML page that sets localStorage and redirects.
+    
+    target_url = "/onboarding" if is_new else "/dashboard"
+    if user.is_admin:
+        target_url = "/admin"
+        
+    html_content = f"""
+    <html>
+        <body>
+            <script>
+                localStorage.setItem('token', '{access_token}');
+                document.cookie = "access_token={access_token}; path=/; max-age=86400";
+                window.location.href = "{target_url}";
+            </script>
+            <p>Redirigiendo...</p>
+        </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
+
+@app.get("/onboarding", response_class=HTMLResponse)
+async def onboarding_view(request: Request):
+    return templates.TemplateResponse("/app/templates/onboarding.html", {"request": request})
+
+@app.post("/api/onboarding")
+async def process_onboarding(
+    data: OnboardingRequest, 
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_active_user)
+):
+    # Update User Profile
+    current_user.full_name = data.full_name
+    session.add(current_user)
+    
+    # Create First Company
+    if len(current_user.companies) >= current_user.max_companies:
+        # Already has companies? Just ignore or error?
+        # User might have refreshed. Let's just update if 1st company exists or create if not.
+        if current_user.companies:
+            comp = current_user.companies[0]
+            comp.name = data.company_name
+            comp.rut = data.company_rut
+            comp.clave_sii = data.company_sii
+            session.add(comp)
+        else:
+             # This shouldn't happen if limit is 0, but limit is 1.
+             pass
+    else:
+        new_company = Company(
+            name=data.company_name,
+            rut=data.company_rut,
+            clave_sii=data.company_sii,
+            user_id=current_user.id
+        )
+        session.add(new_company)
+    
+    session.commit()
+    return {"status": "ok"}
+
 
 # --- Auth API ---
 
@@ -126,9 +217,15 @@ async def upgrade_user_limit(
 ):
     # Simulate payment verification logic here if needed
     if req.new_limit <= current_user.max_companies:
-        raise HTTPException(status_code=400, detail="El nuevo límite debe ser mayor al actual")
+        # Allow if payment is pending, even if limit is same (e.g. initial payment)
+        if current_user.payment_status == 'paid':
+             raise HTTPException(status_code=400, detail="El nuevo límite debe ser mayor al actual")
     
     current_user.max_companies = req.new_limit
+    current_user.payment_status = "paid" # Auto-activate on purchase
+    if not current_user.payment_folio:
+        current_user.payment_folio = f"PAY-{int(time.time())}"
+        
     session.add(current_user)
     session.commit()
     session.refresh(current_user)
@@ -165,7 +262,33 @@ async def activate_user(
     session.commit()
     return {"message": "Usuario activado correctamente"}
 
-# --- Payment API ---
+@app.put("/api/admin/companies/{company_id}")
+async def update_company_admin(
+    company_id: int,
+    company_data: CompanyUpdate,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_active_user)
+):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Requiere permisos de administrador")
+    
+    company = session.get(Company, company_id)
+    if not company:
+        raise HTTPException(status_code=404, detail="Empresa no encontrada")
+    
+    if company_data.name:
+        company.name = company_data.name
+    if company_data.rut:
+        company.rut = company_data.rut
+    if company_data.clave_sii:
+        company.clave_sii = company_data.clave_sii
+    
+    session.add(company)
+    session.commit()
+    session.refresh(company)
+    return company
+
+# --- User/Company API ---
 
 @app.post("/api/pay")
 async def simulate_payment(

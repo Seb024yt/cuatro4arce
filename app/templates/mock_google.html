@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google - Seleccionar Cuenta</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+        .google-logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #4285f4;
+        }
+        .subtitle {
+            font-size: 1.1rem;
+            color: #202124;
+            margin-bottom: 30px;
+        }
+        .account-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-align: left;
+        }
+        .account-item:hover {
+            background-color: #f5f5f5;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #purple;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            font-size: 18px;
+            background: #8e24aa;
+        }
+        .email {
+            font-size: 0.9rem;
+            color: #5f6368;
+        }
+        .name {
+            font-weight: 500;
+            color: #3c4043;
+        }
+        .use-another {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #5f6368;
+            cursor: pointer;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="google-logo">G<span style="color:#ea4335">o</span><span style="color:#fbbc05">o</span><span style="color:#4285f4">g</span><span style="color:#34a853">l</span><span style="color:#ea4335">e</span></div>
+        <div class="subtitle">Selecciona una cuenta</div>
+
+        <div class="account-item" onclick="selectAccount('usuario_nuevo@gmail.com')">
+            <div class="avatar">U</div>
+            <div>
+                <div class="name">Usuario Nuevo</div>
+                <div class="email">usuario_nuevo@gmail.com</div>
+            </div>
+        </div>
+
+        <div class="account-item" onclick="selectAccount('admin@example.com')">
+            <div class="avatar" style="background: #e91e63">A</div>
+            <div>
+                <div class="name">Administrador</div>
+                <div class="email">admin@example.com</div>
+            </div>
+        </div>
+
+        <div class="use-another" onclick="showInput()">Usar otra cuenta</div>
+        <form id="customForm" onsubmit="handleCustom(event)">
+            <input type="email" id="customEmail" placeholder="Correo electrónico" required>
+        </form>
+    </div>
+
+    <script>
+        function selectAccount(email) {
+            window.location.href = `/auth/google/callback?email=${email}`;
+        }
+
+        function showInput() {
+            document.getElementById('customEmail').style.display = 'block';
+            document.getElementById('customEmail').focus();
+        }
+
+        function handleCustom(e) {
+            e.preventDefault();
+            const email = document.getElementById('customEmail').value;
+            selectAccount(email);
+        }
+    </script>
+</body>
+</html>

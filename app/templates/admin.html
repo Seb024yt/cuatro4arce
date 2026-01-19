@@ -26,6 +26,16 @@
         .btn-action { background: #3b82f6; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
         .logout-btn { color: white; text-decoration: none; opacity: 0.8; }
         .logout-btn:hover { opacity: 1; }
+        
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: white; margin: 10% auto; padding: 20px; border-radius: 8px; width: 80%; max-width: 700px; position: relative; }
+        .close-btn { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #aaa; }
+        .close-btn:hover { color: black; }
+        .company-list { margin-top: 15px; }
+        .company-item { border: 1px solid #eee; padding: 10px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .edit-form { display: none; margin-top: 10px; background: #f9f9f9; padding: 10px; border-radius: 4px; }
+        .edit-form input { width: 100%; margin-bottom: 5px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -56,6 +66,16 @@
                     <!-- Rows loaded here -->
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <div id="companiesModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h3>Gestión de Empresas</h3>
+            <div id="companiesList" class="company-list">
+                <!-- Companies loaded here -->
+            </div>
         </div>
     </div>
 
@@ -106,7 +126,10 @@
                     <td>${user.email} ${user.is_admin ? '<span style="color:gold">★</span>' : ''}</td>
                     <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                     <td><small>${folio}</small></td>
-                    <td>${companies}</td>
+                    <td>
+                        ${companies} 
+                        <button class="btn-action" style="background:#667eea; font-size:0.8rem; margin-left:5px;" onclick="viewCompanies(${user.id})">Editar</button>
+                    </td>
                     <td>${actionBtn}</td>
                 `;
                 tbody.appendChild(tr);
@@ -133,6 +156,90 @@
                 }
             } catch (err) {
                 console.error(err);
+            }
+        }
+
+        function viewCompanies(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) return;
+            
+            const list = document.getElementById('companiesList');
+            list.innerHTML = '';
+            
+            if (user.companies.length === 0) {
+                list.innerHTML = '<p>No tiene empresas registradas.</p>';
+            } else {
+                user.companies.forEach(comp => {
+                    const item = document.createElement('div');
+                    item.className = 'company-item-container';
+                    item.innerHTML = `
+                        <div class="company-item">
+                            <div>
+                                <strong>${comp.name}</strong><br>
+                                <small>${comp.rut}</small>
+                            </div>
+                            <button class="btn-action" onclick="toggleEdit(${comp.id})">Editar</button>
+                        </div>
+                        <div id="edit-${comp.id}" class="edit-form">
+                            <input type="text" id="name-${comp.id}" value="${comp.name}" placeholder="Nombre">
+                            <input type="text" id="rut-${comp.id}" value="${comp.rut}" placeholder="RUT">
+                            <input type="password" id="pass-${comp.id}" placeholder="Nueva Clave SII (dejar vacío si no cambia)">
+                            <button class="btn-action" onclick="saveCompany(${comp.id})">Guardar Cambios</button>
+                        </div>
+                    `;
+                    list.appendChild(item);
+                });
+            }
+            
+            document.getElementById('companiesModal').style.display = 'block';
+        }
+
+        function toggleEdit(compId) {
+            const form = document.getElementById(`edit-${compId}`);
+            form.style.display = form.style.display === 'block' ? 'none' : 'block';
+        }
+
+        async function saveCompany(compId) {
+            const name = document.getElementById(`name-${compId}`).value;
+            const rut = document.getElementById(`rut-${compId}`).value;
+            const pass = document.getElementById(`pass-${compId}`).value;
+            
+            const data = { name, rut };
+            if (pass) data.clave_sii = pass;
+
+            try {
+                const res = await fetch(`/api/admin/companies/${compId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (res.ok) {
+                    alert("Empresa actualizada");
+                    loadUsers(); // Reload to refresh local data
+                    closeModal();
+                } else {
+                    const err = await res.json();
+                    alert(err.detail || "Error al actualizar");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error de conexión");
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('companiesModal').style.display = 'none';
+        }
+        
+        // Close modal if clicked outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('companiesModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
             }
         }
 

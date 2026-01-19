@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración Inicial</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        h2 { color: #333; margin-bottom: 1.5rem; text-align: center; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #555; }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .btn-submit:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Bienvenido</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 20px;">Por favor completa tu perfil y registra tu primera empresa.</p>
+        
+        <form id="onboardingForm">
+            <div class="form-group">
+                <label>Tu Nombre Completo</label>
+                <input type="text" id="fullName" required placeholder="Juan Pérez">
+            </div>
+            
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+            
+            <div class="form-group">
+                <label>Nombre de la Empresa (Alias)</label>
+                <input type="text" id="compName" required placeholder="Mi Negocio SpA">
+            </div>
+            <div class="form-group">
+                <label>RUT Empresa</label>
+                <input type="text" id="compRut" required placeholder="76.123.456-7">
+            </div>
+            <div class="form-group">
+                <label>Clave SII</label>
+                <input type="password" id="compPass" required placeholder="••••••">
+            </div>
+            
+            <button type="submit" class="btn-submit">Continuar</button>
+        </form>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/login';
+
+        document.getElementById('onboardingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                full_name: document.getElementById('fullName').value,
+                company_name: document.getElementById('compName').value,
+                company_rut: document.getElementById('compRut').value,
+                company_sii: document.getElementById('compPass').value
+            };
+
+            try {
+                const res = await fetch('/api/onboarding', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    // Redirect to simulated plan purchase
+                    alert("Datos guardados. Ahora selecciona un plan.");
+                    window.location.href = '/payment'; 
+                    // Or simulate buying immediately if requested, but user said "redireccione a comprar plan"
+                } else {
+                    const err = await res.json();
+                    alert(err.detail || 'Error al guardar datos');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error de conexión');
+            }
+        });
+    </script>
+</body>
+</html>
