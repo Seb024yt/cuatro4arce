@@ -38,32 +38,32 @@ async def read_root(request: Request):
 
 @app.get("/login", response_class=HTMLResponse)
 async def login_view(request: Request):
-    return templates.TemplateResponse("app/templates/login.html", {"request": request})
+    return templates.TemplateResponse("/app/templates/login.html", {"request": request})
 
 @app.get("/register", response_class=HTMLResponse)
 async def register_view(request: Request):
-    return templates.TemplateResponse("app/templates/register.html", {"request": request})
+    return templates.TemplateResponse("/app/templates/register.html", {"request": request})
 
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_view(request: Request):
-    return templates.TemplateResponse("app/templates/admin.html", {"request": request})
+    return templates.TemplateResponse("/app/templates/admin.html", {"request": request})
 
 @app.get("/payment", response_class=HTMLResponse)
 async def payment_view(request: Request):
-    return templates.TemplateResponse("app/templates/payment.html", {"request": request})
+    return templates.TemplateResponse("/app/templates/payment.html", {"request": request})
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard_view(request: Request):
-    return templates.TemplateResponse("app/templates/dashboard.html", {"request": request})
+    return templates.TemplateResponse("/app/templates/dashboard.html", {"request": request})
 
 @app.get("/portal", response_class=HTMLResponse)
 async def portal(request: Request, company_id: int, session: Session = Depends(get_session)):
     company = session.get(Company, company_id)
     if not company:
         # Fallback or error, for now just pass None or redirect
-        return templates.TemplateResponse("app/templates/dashboard.html", {"request": request})
+        return templates.TemplateResponse("/app/templates/dashboard.html", {"request": request})
         
-    return templates.TemplateResponse("app/templates/portal.html", {"request": request, "company": company})
+    return templates.TemplateResponse("/app/templates/portal.html", {"request": request, "company": company})
 
 
 # --- Auth API ---
