@@ -11,7 +11,7 @@ from sqlmodel import Session, select
 
 from .models import LoginRequest, ProcessRequest, User, UserCreate, UserRead, Company, CompanyCreate, CompanyRead, Token
 from .sii_connector import run_sii_process
-from .database import create_db_and_tables, get_session
+from .database import create_db_and_tables, get_session, engine
 from .auth import create_access_token, get_password_hash, verify_password, get_current_active_user, ACCESS_TOKEN_EXPIRE_MINUTES
 
 app = FastAPI()
@@ -26,6 +26,24 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
+    
+    # Seed Admin User
+    with Session(engine) as session:
+        admin_email = "admin@example.com"
+        existing_admin = session.exec(select(User).where(User.email == admin_email)).first()
+        if not existing_admin:
+            hashed_pw = get_password_hash("admin123")
+            admin_user = User(
+                email=admin_email, 
+                hashed_password=hashed_pw,
+                is_admin=True,
+                payment_status="paid",
+                is_active=True,
+                max_companies=100
+            )
+            session.add(admin_user)
+            session.commit()
+            print(f"Admin user seeded: {admin_email}")
 
 # Store jobs in memory
 jobs: Dict[str, Dict] = {}
@@ -40,9 +58,9 @@ async def read_root(request: Request):
 async def login_view(request: Request):
     return templates.TemplateResponse("/app/templates/login.html", {"request": request})
 
-@app.get("/register", response_class=HTMLResponse)
-async def register_view(request: Request):
-    return templates.TemplateResponse("/app/templates/register.html", {"request": request})
+# @app.get("/register", response_class=HTMLResponse)
+# async def register_view(request: Request):
+#     return templates.TemplateResponse("/app/templates/register.html", {"request": request})
 
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_view(request: Request):
@@ -68,18 +86,18 @@ async def portal(request: Request, company_id: int, session: Session = Depends(g
 
 # --- Auth API ---
 
-@app.post("/auth/register", response_model=UserRead)
-async def register(user: UserCreate, session: Session = Depends(get_session)):
-    existing_user = session.exec(select(User).where(User.email == user.email)).first()
-    if existing_user:
-        raise HTTPException(status_code=400, detail="El correo ya está registrado")
-    
-    hashed_password = get_password_hash(user.password)
-    db_user = User(email=user.email, hashed_password=hashed_password)
-    session.add(db_user)
-    session.commit()
-    session.refresh(db_user)
-    return db_user
+# @app.post("/auth/register", response_model=UserRead)
+# async def register(user: UserCreate, session: Session = Depends(get_session)):
+#     existing_user = session.exec(select(User).where(User.email == user.email)).first()
+#     if existing_user:
+#         raise HTTPException(status_code=400, detail="El correo ya está registrado")
+#     
+#     hashed_password = get_password_hash(user.password)
+#     db_user = User(email=user.email, hashed_password=hashed_password)
+#     session.add(db_user)
+#     session.commit()
+#     session.refresh(db_user)
+#     return db_user
 
 @app.post("/auth/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(get_session)):
