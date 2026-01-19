@@ -9,7 +9,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
 
-from .models import LoginRequest, ProcessRequest, User, UserCreate, UserRead, Company, CompanyCreate, CompanyRead, Token
+from .models import LoginRequest, ProcessRequest, User, UserCreate, UserRead, Company, CompanyCreate, CompanyRead, Token, UpgradeRequest
 from .sii_connector import run_sii_process
 from .database import create_db_and_tables, get_session, engine
 from .auth import create_access_token, get_password_hash, verify_password, get_current_active_user, ACCESS_TOKEN_EXPIRE_MINUTES
@@ -117,6 +117,22 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 @app.get("/api/users/me", response_model=UserRead)
 async def read_users_me(current_user: User = Depends(get_current_active_user)):
     return current_user
+
+@app.post("/api/users/upgrade")
+async def upgrade_user_limit(
+    req: UpgradeRequest,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_active_user)
+):
+    # Simulate payment verification logic here if needed
+    if req.new_limit <= current_user.max_companies:
+        raise HTTPException(status_code=400, detail="El nuevo límite debe ser mayor al actual")
+    
+    current_user.max_companies = req.new_limit
+    session.add(current_user)
+    session.commit()
+    session.refresh(current_user)
+    return {"message": "Plan actualizado correctamente", "max_companies": current_user.max_companies}
 
 # --- Admin API ---
 

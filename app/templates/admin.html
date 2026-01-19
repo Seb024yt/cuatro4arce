@@ -35,7 +35,11 @@
     </nav>
 
     <div class="container">
-        <h2 style="margin-bottom: 1.5rem;">Usuarios Registrados</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2>Usuarios Registrados</h2>
+            <input type="text" id="searchInput" placeholder="Buscar por email..." 
+                   style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; width: 300px;">
+        </div>
         <div class="card">
             <table id="usersTable">
                 <thead>
@@ -59,6 +63,8 @@
         const token = localStorage.getItem('token');
         if (!token) window.location.href = '/';
 
+        let allUsers = [];
+
         async function loadUsers() {
             try {
                 const res = await fetch('/api/admin/users', {
@@ -71,37 +77,47 @@
                     return;
                 }
 
-                const users = await res.json();
-                const tbody = document.querySelector('#usersTable tbody');
-                tbody.innerHTML = '';
-
-                users.forEach(user => {
-                    const companies = user.companies.map(c => c.name).join(', ') || 'Sin empresas';
-                    const statusClass = user.payment_status === 'paid' ? 'status-paid' : 'status-pending';
-                    const statusText = user.payment_status === 'paid' ? 'PAGADO' : 'PENDIENTE';
-                    const folio = user.payment_folio || '-';
-                    
-                    let actionBtn = '';
-                    if (user.payment_status !== 'paid') {
-                        actionBtn = `<button class="btn-action" onclick="activateUser(${user.id})">Activar</button>`;
-                    }
-
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${user.id}</td>
-                        <td>${user.email} ${user.is_admin ? '<span style="color:gold">★</span>' : ''}</td>
-                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                        <td><small>${folio}</small></td>
-                        <td>${companies}</td>
-                        <td>${actionBtn}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+                allUsers = await res.json();
+                renderUsers(allUsers);
             } catch (err) {
                 console.error(err);
                 alert("Error al cargar usuarios");
             }
         }
+
+        function renderUsers(users) {
+            const tbody = document.querySelector('#usersTable tbody');
+            tbody.innerHTML = '';
+
+            users.forEach(user => {
+                const companies = user.companies.map(c => c.name).join(', ') || 'Sin empresas';
+                const statusClass = user.payment_status === 'paid' ? 'status-paid' : 'status-pending';
+                const statusText = user.payment_status === 'paid' ? 'PAGADO' : 'PENDIENTE';
+                const folio = user.payment_folio || '-';
+                
+                let actionBtn = '';
+                if (user.payment_status !== 'paid') {
+                    actionBtn = `<button class="btn-action" onclick="activateUser(${user.id})">Activar</button>`;
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.email} ${user.is_admin ? '<span style="color:gold">★</span>' : ''}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td><small>${folio}</small></td>
+                    <td>${companies}</td>
+                    <td>${actionBtn}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allUsers.filter(u => u.email.toLowerCase().includes(term));
+            renderUsers(filtered);
+        });
 
         async function activateUser(userId) {
             if (!confirm('¿Activar manualmente a este usuario?')) return;

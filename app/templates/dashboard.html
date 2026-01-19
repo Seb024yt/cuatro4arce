@@ -185,11 +185,41 @@
     <div class="container">
         <div class="header-section">
             <h2>Mis Empresas</h2>
-            <button id="btnAddCompany" class="btn-primary" onclick="openModal()">+ Agregar Empresa</button>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-primary" onclick="openPlansModal()" style="background: linear-gradient(to right, #f6d365, #fda085); color: #333;">★ Comprar más registros</button>
+                <button id="btnAddCompany" class="btn-primary" onclick="openModal()">+ Agregar Empresa</button>
+            </div>
         </div>
 
         <div id="companiesGrid" class="grid-companies">
             <!-- Companies loaded here -->
+        </div>
+    </div>
+
+    <!-- Modal Plans -->
+    <div id="plansModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <h3>Mejorar Plan</h3>
+            <p style="margin-bottom: 20px; color: #666;">Seleccione un plan para aumentar su límite de empresas.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="border: 2px solid #eee; padding: 20px; border-radius: 10px; text-align: center;">
+                    <h4 style="margin-bottom: 10px;">Plan Pyme</h4>
+                    <p style="font-size: 2rem; font-weight: bold; color: #667eea; margin-bottom: 10px;">5</p>
+                    <p style="color: #666; margin-bottom: 15px;">Empresas Totales</p>
+                    <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="buyPlan(5)">Comprar</button>
+                </div>
+                <div style="border: 2px solid #eee; padding: 20px; border-radius: 10px; text-align: center; border-color: #f6d365;">
+                    <h4 style="margin-bottom: 10px;">Plan Full</h4>
+                    <p style="font-size: 2rem; font-weight: bold; color: #fda085; margin-bottom: 10px;">10</p>
+                    <p style="color: #666; margin-bottom: 15px;">Empresas Totales</p>
+                    <button class="btn-primary" style="width: 100%; justify-content: center; background: linear-gradient(to right, #f6d365, #fda085); color: #333;" onclick="buyPlan(10)">Comprar</button>
+                </div>
+            </div>
+            
+            <div class="modal-actions" style="margin-top: 20px;">
+                <button type="button" class="btn-cancel" onclick="closePlansModal()">Cerrar</button>
+            </div>
         </div>
     </div>
 
@@ -235,9 +265,14 @@
                 if (!response.ok) throw new Error('Unauthorized');
                 
                 const data = await response.json();
+
+                if (data.is_admin) {
+                    window.location.href = '/admin';
+                    return;
+                }
                 
                 // Enforce Payment
-                if (data.payment_status !== 'paid' && !data.is_admin) {
+                if (data.payment_status !== 'paid') {
                     window.location.href = '/payment';
                     return;
                 }
@@ -261,7 +296,12 @@
                 const btn = document.getElementById('btnAddCompany');
                 btn.disabled = true;
                 btn.title = "Has alcanzado el límite de empresas permitidas.";
-                btn.textContent = "Límite Alcanzado (1 Máx)";
+                btn.textContent = "Límite Alcanzado (" + maxCompanies + " Máx)";
+            } else {
+                const btn = document.getElementById('btnAddCompany');
+                btn.disabled = false;
+                btn.title = "";
+                btn.textContent = "+ Agregar Empresa";
             }
 
             companies.forEach(comp => {
@@ -270,7 +310,7 @@
                 card.innerHTML = `
                     <div class="company-name">${comp.name}</div>
                     <div class="company-rut">${comp.rut}</div>
-                    <button class="btn-action" onclick="goToPortal(${comp.id})">Generar Planilla</button>
+                    <button class="btn-action" onclick="goToPortal(${comp.id})">Generar SII</button>
                 `;
                 grid.appendChild(card);
             });
@@ -282,6 +322,43 @@
 
         function closeModal() {
             document.getElementById('addCompanyModal').style.display = 'none';
+        }
+
+        function openPlansModal() {
+            document.getElementById('plansModal').style.display = 'flex';
+        }
+
+        function closePlansModal() {
+            document.getElementById('plansModal').style.display = 'none';
+        }
+
+        async function buyPlan(newLimit) {
+            if (!confirm('¿Confirmar compra del plan? Esto es una simulación.')) return;
+
+            try {
+                const res = await fetch('/api/users/upgrade', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ new_limit: newLimit })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    alert('¡Compra exitosa! Ahora agregue los datos de su nueva empresa.');
+                    closePlansModal();
+                    // Reload dashboard to update limits, then open add company modal
+                    await loadDashboard(); 
+                    openModal(); 
+                } else {
+                    const err = await res.json();
+                    alert(err.detail || 'Error al comprar plan');
+                }
+            } catch (e) {
+                alert('Error de conexión');
+            }
         }
 
         function logout() {

@@ -73,3 +73,6 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+class UpgradeRequest(BaseModel):
+    new_limit: int
+
