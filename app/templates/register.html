@@ -162,7 +162,7 @@
                 if (response.ok) {
                     successMsg.style.display = 'block';
                     setTimeout(() => {
-                        window.location.href = '/';
+                        window.location.href = '/login';
                     }, 2000);
                 } else {
                     const data = await response.json();

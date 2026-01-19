@@ -252,7 +252,7 @@
         // Auth
         const token = localStorage.getItem('token');
         if (!token) {
-            window.location.href = '/';
+            window.location.href = '/login';
         }
 
         // State
@@ -262,6 +262,12 @@
             "enero", "febrero", "marzo", "abril", "mayo", "junio", 
             "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
         ];
+
+        function logout() {
+            localStorage.removeItem('token');
+            document.cookie = 'access_token=; Max-Age=0; path=/;';
+            window.location.href = '/login';
+        }
 
         // Event Listeners
         form.addEventListener('input', validateForm);

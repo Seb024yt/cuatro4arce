@@ -123,7 +123,7 @@
         function logout() {
             localStorage.removeItem('token');
             document.cookie = 'access_token=; Max-Age=0; path=/;';
-            window.location.href = '/';
+            window.location.href = '/login';
         }
 
         loadUsers();
