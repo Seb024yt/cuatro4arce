@@ -1,8 +1,7 @@
 RewriteEngine On
+RewriteBase /
 
-# Redirect HTTP to HTTPS
-RewriteCond %{HTTPS} off
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-# Proxy to local Python app running on port 8000
-RewriteRule ^(.*)$ http://127.0.0.1:8000/$1 [P,L]
+# Redirect all requests to index.php (which proxies to Python)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
