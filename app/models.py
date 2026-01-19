@@ -78,3 +78,9 @@ class Token(BaseModel):
 class UpgradeRequest(BaseModel):
     new_limit: int
 
+class OnboardingRequest(BaseModel):
+    full_name: str
+    company_name: str
+    company_rut: str
+    company_sii: str
+
