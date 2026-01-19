@@ -36,9 +36,21 @@ jobs: Dict[str, Dict] = {}
 async def read_root(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
+@app.get("/login", response_class=HTMLResponse)
+async def login_view(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
 @app.get("/register", response_class=HTMLResponse)
 async def register_view(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
+
+@app.get("/admin", response_class=HTMLResponse)
+async def admin_view(request: Request):
+    return templates.TemplateResponse("admin.html", {"request": request})
+
+@app.get("/payment", response_class=HTMLResponse)
+async def payment_view(request: Request):
+    return templates.TemplateResponse("payment.html", {"request": request})
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard_view(request: Request):
