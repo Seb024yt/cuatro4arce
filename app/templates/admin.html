@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f4f6f9; color: #333; }
+        .navbar {
+            background: #2d3748;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; font-weight: 600; color: #555; }
+        .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 500; }
+        .status-paid { background: #d1fae5; color: #065f46; }
+        .status-pending { background: #fee2e2; color: #991b1b; }
+        .btn-action { background: #3b82f6; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+        .logout-btn { color: white; text-decoration: none; opacity: 0.8; }
+        .logout-btn:hover { opacity: 1; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>Administración</h1>
+        <a href="#" class="logout-btn" onclick="logout()">Cerrar Sesión</a>
+    </nav>
+
+    <div class="container">
+        <h2 style="margin-bottom: 1.5rem;">Usuarios Registrados</h2>
+        <div class="card">
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Estado Pago</th>
+                        <th>Folio</th>
+                        <th>Empresas</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/';
+
+        async function loadUsers() {
+            try {
+                const res = await fetch('/api/admin/users', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (res.status === 403) {
+                    alert("Acceso denegado. No es administrador.");
+                    window.location.href = '/dashboard';
+                    return;
+                }
+
+                const users = await res.json();
+                const tbody = document.querySelector('#usersTable tbody');
+                tbody.innerHTML = '';
+
+                users.forEach(user => {
+                    const companies = user.companies.map(c => c.name).join(', ') || 'Sin empresas';
+                    const statusClass = user.payment_status === 'paid' ? 'status-paid' : 'status-pending';
+                    const statusText = user.payment_status === 'paid' ? 'PAGADO' : 'PENDIENTE';
+                    const folio = user.payment_folio || '-';
+                    
+                    let actionBtn = '';
+                    if (user.payment_status !== 'paid') {
+                        actionBtn = `<button class="btn-action" onclick="activateUser(${user.id})">Activar</button>`;
+                    }
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${user.id}</td>
+                        <td>${user.email} ${user.is_admin ? '<span style="color:gold">★</span>' : ''}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td><small>${folio}</small></td>
+                        <td>${companies}</td>
+                        <td>${actionBtn}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error(err);
+                alert("Error al cargar usuarios");
+            }
+        }
+
+        async function activateUser(userId) {
+            if (!confirm('¿Activar manualmente a este usuario?')) return;
+            try {
+                const res = await fetch(`/api/admin/users/${userId}/activate`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    loadUsers();
+                } else {
+                    alert("Error al activar");
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            document.cookie = 'access_token=; Max-Age=0; path=/;';
+            window.location.href = '/';
+        }
+
+        loadUsers();
+    </script>
+</body>
+</html>

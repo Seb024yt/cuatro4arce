@@ -139,23 +139,20 @@
 </head>
 <body>
     <nav class="navbar">
-        <h1>Portal SII</h1>
-        <a href="/" class="logout-btn">Cerrar Sesión</a>
+        <h1>Portal SII <span id="companyNameDisplay" style="font-size: 0.8em; opacity: 0.8; margin-left: 10px;"></span></h1>
+        <div>
+            <a href="/dashboard" class="logout-btn" style="background:transparent; border:1px solid #667eea; color:#667eea; margin-right:10px;">Volver al Panel</a>
+            <a href="#" class="logout-btn" onclick="logout()">Cerrar Sesión</a>
+        </div>
     </nav>
 
     <div class="container">
         <div class="card">
             <h2>Generar Planilla de Impuesto</h2>
             <form id="mainForm">
+                <input type="hidden" id="companyId" value="{{ company_id }}">
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label>RUT Empresa</label>
-                        <input type="text" id="rutEmpresa" placeholder="12.345.678-9" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Clave SII</label>
-                        <input type="password" id="claveSII" placeholder="********" required>
-                    </div>
+                    <!-- RUT y Clave ya no son necesarios visiblemente -->
                     <div class="form-group">
                         <label>Mes</label>
                         <select id="mes" required>
@@ -358,8 +355,9 @@
 
             // Gather data
             const formData = {
-                rutEmpresa: document.getElementById('rutEmpresa').value,
-                claveSII: document.getElementById('claveSII').value,
+                company_id: companyId,
+                // rutEmpresa: document.getElementById('rutEmpresa').value,
+                // claveSII: document.getElementById('claveSII').value,
                 mes: document.getElementById('mes').value,
                 anio: document.getElementById('anio').value,
                 correo: document.getElementById('correo').value,

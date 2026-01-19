@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago de Suscripción</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h2 { margin-bottom: 1rem; color: #333; }
+        p { color: #666; margin-bottom: 2rem; line-height: 1.5; }
+        .amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 2rem;
+        }
+        .btn-pay {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn-pay:hover { transform: translateY(-2px); }
+        .logout-link { display: block; margin-top: 15px; color: #666; text-decoration: none; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Activar Cuenta</h2>
+        <p>Para acceder al panel y gestionar sus empresas, debe realizar el pago de suscripción.</p>
+        <div class="amount">$10.000 CLP</div>
+        <button class="btn-pay" onclick="simulatePayment()">Simular Pago</button>
+        <a href="#" onclick="logout()" class="logout-link">Cerrar Sesión</a>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/';
+
+        async function simulatePayment() {
+            try {
+                const res = await fetch('/api/pay', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    alert(`Pago exitoso. Folio: ${data.folio}`);
+                    window.location.href = '/dashboard';
+                } else {
+                    alert('Error en el pago');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error de conexión');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            document.cookie = 'access_token=; Max-Age=0; path=/;';
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>

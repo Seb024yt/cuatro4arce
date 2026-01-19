@@ -20,10 +20,11 @@ def deploy():
         
         print("Connected. Pulling latest changes from GitHub...")
         
-        # Execute git pull
+        # Execute git pull and install dependencies
         commands = [
             f"cd {REMOTE_PATH}",
-            "git pull origin main"
+            "git pull origin main",
+            "pip install -r requirements.txt"
         ]
         
         full_command = " && ".join(commands)
