@@ -51,6 +51,8 @@ class UserRead(BaseModel):
     id: int
     email: EmailStr
     max_companies: int
+    payment_status: str
+    is_admin: bool
     companies: List["CompanyRead"] = []
 
 class CompanyCreate(BaseModel):
