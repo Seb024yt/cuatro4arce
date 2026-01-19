@@ -7,6 +7,7 @@ from pydantic import BaseModel, EmailStr
 class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     email: str = Field(unique=True, index=True)
+    full_name: Optional[str] = Field(default=None)
     hashed_password: str
     is_active: bool = Field(default=True)
     is_admin: bool = Field(default=False)
@@ -50,6 +51,7 @@ class UserCreate(BaseModel):
 class UserRead(BaseModel):
     id: int
     email: EmailStr
+    full_name: Optional[str] = None
     max_companies: int
     payment_status: str
     is_admin: bool
