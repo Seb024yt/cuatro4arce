@@ -29,6 +29,7 @@ def on_startup():
     
     # Seed Admin User
     with Session(engine) as session:
+        # 1. Admin User
         admin_email = "admin@example.com"
         existing_admin = session.exec(select(User).where(User.email == admin_email)).first()
         if not existing_admin:
@@ -39,11 +40,60 @@ def on_startup():
                 is_admin=True,
                 payment_status="paid",
                 is_active=True,
-                max_companies=100
+                max_companies=100,
+                full_name="Admin Principal"
             )
             session.add(admin_user)
             session.commit()
             print(f"Admin user seeded: {admin_email}")
+
+        # 2. Normal User (Pending Payment)
+        user_email = "user@example.com"
+        existing_user = session.exec(select(User).where(User.email == user_email)).first()
+        if not existing_user:
+            hashed_pw = get_password_hash("user123")
+            normal_user = User(
+                email=user_email,
+                hashed_password=hashed_pw,
+                is_admin=False,
+                payment_status="pending",
+                is_active=True,
+                max_companies=1,
+                full_name="Usuario Nuevo"
+            )
+            session.add(normal_user)
+            session.commit()
+            print(f"Normal user seeded: {user_email}")
+
+        # 3. Paid User (With Company)
+        paid_email = "paid@example.com"
+        existing_paid = session.exec(select(User).where(User.email == paid_email)).first()
+        if not existing_paid:
+            hashed_pw = get_password_hash("user123")
+            paid_user = User(
+                email=paid_email,
+                hashed_password=hashed_pw,
+                is_admin=False,
+                payment_status="paid",
+                payment_folio="SEED-PAID-001",
+                is_active=True,
+                max_companies=5,
+                full_name="Cliente Premium"
+            )
+            session.add(paid_user)
+            session.commit()
+            session.refresh(paid_user)
+            
+            # Add a sample company for the paid user
+            company = Company(
+                name="Empresa Ejemplo SpA",
+                rut="76.123.456-7",
+                clave_sii="sii12345",
+                user_id=paid_user.id
+            )
+            session.add(company)
+            session.commit()
+            print(f"Paid user seeded: {paid_email}")
 
 # Store jobs in memory
 jobs: Dict[str, Dict] = {}
