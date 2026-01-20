@@ -115,9 +115,12 @@
                 const statusText = user.payment_status === 'paid' ? 'PAGADO' : 'PENDIENTE';
                 const folio = user.payment_folio || '-';
                 
-                let actionBtn = '';
+                let actionBtns = [];
+                // Botón Editar Empresas
+                actionBtns.push(`<button class="btn-action" style="background:#667eea; margin-right:5px;" onclick="viewCompanies(${user.id})">Editar</button>`);
+
                 if (user.payment_status !== 'paid') {
-                    actionBtn = `<button class="btn-action" onclick="activateUser(${user.id})">Activar</button>`;
+                    actionBtns.push(`<button class="btn-action" onclick="activateUser(${user.id})">Activar</button>`);
                 }
 
                 const tr = document.createElement('tr');
@@ -126,11 +129,8 @@
                     <td>${user.email} ${user.is_admin ? '<span style="color:gold">★</span>' : ''}</td>
                     <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                     <td><small>${folio}</small></td>
-                    <td>
-                        ${companies} 
-                        <button class="btn-action" style="background:#667eea; font-size:0.8rem; margin-left:5px;" onclick="viewCompanies(${user.id})">Editar</button>
-                    </td>
-                    <td>${actionBtn}</td>
+                    <td>${companies}</td>
+                    <td>${actionBtns.join('')}</td>
                 `;
                 tbody.appendChild(tr);
             });
