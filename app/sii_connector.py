@@ -8,6 +8,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+try:
+    from webdriver_manager.core.os_manager import ChromeType
+except ImportError:
+    from webdriver_manager.core.utils import ChromeType
+
 from .data_processor import consolidate_data
 
 MONTH_MAP = {
@@ -108,6 +113,17 @@ class SIIAutomator:
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--window-size=1920,1080")
         
+        # Detect binary
+        binary_path = self._get_chrome_binary()
+        is_chromium = False
+        if binary_path:
+            print(f"Using Chrome binary at: {binary_path}")
+            options.binary_location = binary_path
+            if "chromium" in binary_path.lower():
+                is_chromium = True
+        else:
+            print("Warning: No Chrome/Chromium binary found in standard locations.")
+        
         prefs = {
             "download.default_directory": download_dir,
             "download.prompt_for_download": False,
@@ -116,8 +132,44 @@ class SIIAutomator:
         }
         options.add_experimental_option("prefs", prefs)
         
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-        self.wait = WebDriverWait(self.driver, 20)
+        try:
+            if is_chromium:
+                manager = ChromeDriverManager(chrome_type=ChromeType.CHROMIUM)
+            else:
+                manager = ChromeDriverManager()
+            
+            service = Service(manager.install())
+            self.driver = webdriver.Chrome(service=service, options=options)
+            self.wait = WebDriverWait(self.driver, 20)
+        except Exception as e:
+            print(f"Failed to initialize WebDriver: {e}")
+            raise e
+
+    def _get_chrome_binary(self):
+        """Attempts to find the Chrome or Chromium binary."""
+        # Check env var first
+        if os.environ.get("CHROME_BIN"):
+            return os.environ.get("CHROME_BIN")
+            
+        paths = [
+            "/usr/bin/google-chrome",
+            "/usr/bin/google-chrome-stable",
+            "/usr/bin/chromium",
+            "/usr/bin/chromium-browser",
+            "/snap/bin/chromium",
+            "/usr/bin/chrome",
+            "C:/Program Files/Google/Chrome/Application/chrome.exe",
+            "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe"
+        ]
+        for p in paths:
+            if os.path.exists(p):
+                return p
+        # Check shutil.which
+        for name in ["google-chrome", "chromium", "chromium-browser", "chrome"]:
+            path = shutil.which(name)
+            if path:
+                return path
+        return None
 
     def login(self, rut, clave):
         try:
