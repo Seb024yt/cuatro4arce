@@ -102,7 +102,11 @@ jobs: Dict[str, Dict] = {}
 
 @app.get("/", response_class=RedirectResponse)
 async def read_root(request: Request):
-    return RedirectResponse(url="/login")
+    return RedirectResponse(url="/inicio")
+    
+@app.get("/inicio", response_class=HTMLResponse)
+async def inicio_view(request: Request):
+    return templates.TemplateResponse("/app/templates/inicio.html", {"request": request})
 
 @app.get("/login", response_class=HTMLResponse)
 async def login_view(request: Request):

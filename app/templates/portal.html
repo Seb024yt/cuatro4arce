@@ -67,6 +67,68 @@
             border-top: 1px solid #eee;
             padding-top: 1.5rem;
         }
+        .workers-toggle {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 10px 0;
+        }
+        .toggle-option {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .toggle-text {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .clear {
+            clear: both;
+        }
+        .checkBox {
+            display: inline-block;
+            position: relative;
+            width: 26px;
+            height: 26px;
+        }
+        .checkBox-input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .checkBox-box {
+            display: block;
+            cursor: pointer;
+            width: 27px;
+            height: 27px;
+            border: 3px solid rgba(0, 0, 0, 0.8);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0px 0px 0px 2px rgba(102, 126, 234, 0.35);
+        }
+        .checkBox-box::after {
+            content: "";
+            width: 60px;
+            height: 60px;
+            background-color: #667eea;
+            top: -52px;
+            left: -52px;
+            position: absolute;
+            transform: rotateZ(45deg);
+            z-index: 1;
+            transition: 300ms ease;
+        }
+        .checkBox-input:checked + .checkBox-box::after {
+            left: -10px;
+            top: -10px;
+        }
+        .transition {
+            transition: 300ms ease;
+        }
 
         .worker-table {
             width: 100%;
@@ -142,7 +204,6 @@
         <h1>Portal SII <span id="companyNameDisplay" style="font-size: 0.8em; opacity: 0.8; margin-left: 10px;"></span></h1>
         <div>
             <a href="/dashboard" class="logout-btn" style="background:transparent; border:1px solid #667eea; color:#667eea; margin-right:10px;">Volver al Panel</a>
-            <a href="#" class="logout-btn" onclick="logout()">Cerrar Sesión</a>
         </div>
     </nav>
 
@@ -198,10 +259,22 @@
                 </div>
 
                 <div class="workers-section">
-                    <label>¿Tiene trabajadores con impuesto unico?</label>
-                    <div style="margin: 10px 0;">
-                        <input type="radio" name="hasWorkers" value="yes" id="workersYes" style="width:auto;"> <label for="workersYes" style="display:inline;">Sí</label>
-                        <input type="radio" name="hasWorkers" value="no" id="workersNo" checked style="width:auto; margin-left: 20px;"> <label for="workersNo" style="display:inline;">No</label>
+                    <label for="hasWorkers">¿Tiene trabajadores con impuesto unico?</label>
+                    <div class="workers-toggle">
+                        <label class="toggle-option" for="hasWorkersNo">
+                            <span class="checkBox">
+                                <input id="hasWorkersNo" class="checkBox-input" type="radio" name="hasWorkers" value="no" checked>
+                                <span class="checkBox-box transition"></span>
+                            </span>
+                            <span class="toggle-text">No</span>
+                        </label>
+                        <label class="toggle-option" for="hasWorkersYes">
+                            <span class="checkBox">
+                                <input id="hasWorkersYes" class="checkBox-input" type="radio" name="hasWorkers" value="yes">
+                                <span class="checkBox-box transition"></span>
+                            </span>
+                            <span class="toggle-text">Sí</span>
+                        </label>
                     </div>
 
                     <div id="workersTableContainer" style="display:none;">
