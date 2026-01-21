@@ -324,15 +324,12 @@
                 
                 // Enforce Payment
                 if (data.payment_status !== 'paid') {
-                    // Show Plans Modal and prevent closing it
+                    // Show Plans Modal
                     document.getElementById('plansModal').style.display = 'flex';
-                    // Hide Close button in plans modal if payment is required
-                    document.querySelector('#plansModal .btn-cancel').style.display = 'none';
-                    // Disable outside click close
-                    window.onclick = null; 
-                    // Don't return, but maybe hide the main content? 
-                    // Actually, let's just show the modal on top.
-                    // But if I return, renderCompanies won't run, which is fine as they can't see them yet.
+                    // We allow closing it now per user request
+                    // document.querySelector('#plansModal .btn-cancel').style.display = 'none';
+                    // window.onclick = null; 
+                    
                     document.getElementById('userEmail').textContent = data.email; // Show email at least
                     return;
                 }
