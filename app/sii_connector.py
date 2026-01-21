@@ -31,7 +31,16 @@ def run_sii_process(job_id, data, update_status_func):
     """
     Orchestrates the SII process: Login -> Loop Months -> Download -> Consolidate
     """
-    download_dir = os.path.join(os.getcwd(), "downloads", job_id)
+    # Create main folder structure
+    base_dir = os.path.join(os.getcwd(), "sii_data")
+    
+    # Downloads subfolder
+    download_dir = os.path.join(base_dir, "descargados", job_id)
+    
+    # Generated subfolder
+    output_dir = os.path.join(base_dir, "generados")
+    os.makedirs(output_dir, exist_ok=True)
+    
     automator = None
     
     try:
@@ -65,10 +74,7 @@ def run_sii_process(job_id, data, update_status_func):
 
         # 3. Consolidate
         update_status_func("Consolidando información y generando Excel...")
-        output_file = os.path.join(os.getcwd(), "static", f"Planilla_{job_id}.xlsx")
-        
-        # Ensure static dir exists
-        os.makedirs(os.path.join(os.getcwd(), "static"), exist_ok=True)
+        output_file = os.path.join(output_dir, f"Planilla_{job_id}.xlsx")
         
         consolidate_data(download_dir, output_file)
         

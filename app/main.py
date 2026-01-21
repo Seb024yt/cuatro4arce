@@ -16,11 +16,18 @@ from .auth import create_access_token, get_password_hash, verify_password, get_c
 
 app = FastAPI()
 
+import os
+
 # Mount templates
 templates = Jinja2Templates(directory=".")
 
 # Mount static files (for generated excel)
+os.makedirs("static", exist_ok=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Mount generated files
+os.makedirs("sii_data/generados", exist_ok=True)
+app.mount("/files", StaticFiles(directory="sii_data/generados"), name="files")
 
 # Initialize DB
 @app.on_event("startup")
