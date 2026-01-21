@@ -89,12 +89,12 @@ def run_sii_process(job_id, data, update_status_func):
     finally:
         if automator:
             automator.close()
-        # Cleanup downloads
-        if os.path.exists(download_dir):
-            try:
-                shutil.rmtree(download_dir)
-            except:
-                pass
+        # Keep downloads as requested by user
+        # if os.path.exists(download_dir):
+        #    try:
+        #        shutil.rmtree(download_dir)
+        #    except:
+        #        pass
 
 class SIIAutomator:
     def __init__(self, download_dir):
