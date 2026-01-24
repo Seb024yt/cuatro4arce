@@ -453,6 +453,42 @@
       line-height:1.45;
     }
 
+    /* Video Player Styles */
+    .video-card {
+      margin-bottom: 0; /* Let stack handle gap */
+    }
+    .video-container {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      position: relative;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .video-container video {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .video-fallback {
+      padding: 20px;
+      text-align: center;
+      color: #fff;
+      background: #1f2937;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .video-fallback p { color: #9ca3af; font-size: 14px; margin: 0; }
+    .video-fallback strong { color: #f87171; font-size: 16px; }
+
     /* Responsive */
     @media (max-width: 980px){
       .grid{ grid-template-columns:1fr; }
@@ -656,6 +692,29 @@
       <!-- RIGHT -->
       <section class="right-col">
         <div class="stack">
+          <!-- VIDEO SECTION -->
+          <section class="card video-card">
+            <div class="card__pad">
+              <h3 class="subhead" style="margin-top:0;">Demo del Sistema</h3>
+              <div class="video-container">
+                <video id="systemVideo" controls playsinline preload="metadata" poster="/static/video-poster.jpg">
+                  <source src="/static/sistema.mp4" type="video/mp4">
+                  <source src="/static/sistema.webm" type="video/webm">
+                  <!-- Fallback message for browsers not supporting video tag -->
+                  <div class="video-fallback">
+                    <strong>Navegador no compatible</strong>
+                    <p>Tu navegador no soporta la reproducción de video.</p>
+                  </div>
+                </video>
+                <!-- JS Fallback overlay -->
+                <div id="videoError" class="video-fallback" style="display:none;">
+                  <strong>Video no disponible</strong>
+                  <p>No se pudo cargar el video demostrativo.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
           <section class="card">
             <div class="card__pad">
               <h3 class="subhead" style="margin-top:0;">Noticias recientes</h3>
@@ -702,24 +761,48 @@
         btn.classList.add("active");
         btn.setAttribute("aria-selected", "true");
 
-        const key = btn.dataset.tab;
-        const panels = [panelContables, panelGlosario, panelNoticias];
-        panels.forEach(panel => {
-          if(panel){
-            panel.style.display = "none";
-          }
-        });
-        if(key === "contables"){
-          panelContables.style.display = "";
-        }else if(key === "glosario"){
-          panelGlosario.style.display = "";
-        }else{
-          panelNoticias.style.display = "";
-        }
+        // Hide all panels
+        panelContables.style.display = "none";
+        panelGlosario.style.display = "none";
+        panelNoticias.style.display = "none";
+
+        // Show target
+        const target = btn.dataset.tab;
+        if(target === "contables") panelContables.style.display = "block";
+        if(target === "glosario") panelGlosario.style.display = "block";
+        if(target === "noticias") panelNoticias.style.display = "block";
       });
     });
 
-
+    // Video Error Handling
+    document.addEventListener('DOMContentLoaded', function() {
+      const video = document.getElementById('systemVideo');
+      const errorMsg = document.getElementById('videoError');
+      
+      if(video) {
+        // Listen for error on the video element itself (e.g. source load failure)
+        video.addEventListener('error', handleVideoError, true);
+        
+        // Also check sources individually
+        const sources = video.getElementsByTagName('source');
+        let errorCount = 0;
+        
+        for(let i=0; i<sources.length; i++) {
+          sources[i].addEventListener('error', function() {
+            errorCount++;
+            if(errorCount >= sources.length) {
+              handleVideoError();
+            }
+          });
+        }
+        
+        function handleVideoError() {
+          console.warn('Video failed to load');
+          video.style.display = 'none';
+          errorMsg.style.display = 'flex';
+        }
+      }
+    });
   </script>
 </body>
 </html>

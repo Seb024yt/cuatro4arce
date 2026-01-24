@@ -19,6 +19,10 @@ def run():
         sftp = client.open_sftp()
         print("Uploading app/data_processor.py...")
         sftp.put("app/data_processor.py", f"{REMOTE_PATH}/app/data_processor.py")
+
+        # Upload app/sii_connector.py
+        print("Uploading app/sii_connector.py...")
+        sftp.put("app/sii_connector.py", f"{REMOTE_PATH}/app/sii_connector.py")
         
         # Upload examples image
         try:
