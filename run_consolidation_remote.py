@@ -23,6 +23,10 @@ def run():
         # Upload app/sii_connector.py
         print("Uploading app/sii_connector.py...")
         sftp.put("app/sii_connector.py", f"{REMOTE_PATH}/app/sii_connector.py")
+
+        # Upload app/email_sender.py
+        print("Uploading app/email_sender.py...")
+        sftp.put("app/email_sender.py", f"{REMOTE_PATH}/app/email_sender.py")
         
         # Upload examples image
         try:
@@ -39,6 +43,28 @@ def run():
                     sftp.put(local_img, f"{REMOTE_PATH}/ejemplos/{img_name}")
         except Exception as e:
             print(f"Error uploading image: {e}")
+
+        # Upload static folder content (videos, etc)
+        try:
+            print("Syncing static folder...")
+            # Ensure remote static dir exists
+            try:
+                sftp.stat(f"{REMOTE_PATH}/static")
+            except FileNotFoundError:
+                sftp.mkdir(f"{REMOTE_PATH}/static")
+            
+            for root, dirs, files in os.walk("static"):
+                for file in files:
+                    if file == ".gitkeep": continue
+                    local_path = os.path.join(root, file)
+                    # Rel path for remote
+                    rel_path = os.path.relpath(local_path, "static")
+                    remote_path = f"{REMOTE_PATH}/static/{rel_path}".replace("\\", "/")
+                    
+                    print(f"Uploading static/{rel_path}...")
+                    sftp.put(local_path, remote_path)
+        except Exception as e:
+            print(f"Error syncing static folder: {e}")
 
         # Create a small script on remote to run consolidation
         remote_script = """
