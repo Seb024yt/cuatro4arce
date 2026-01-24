@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 from fastapi import FastAPI, Request, BackgroundTasks, HTTPException, Depends, status, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, FileResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
 
@@ -444,4 +444,20 @@ async def get_status(job_id: str):
     if job_id not in jobs:
         raise HTTPException(status_code=404, detail="Job not found")
     return jobs[job_id]
+
+@app.get("/api/download/{job_id}")
+async def download_file(job_id: str):
+    # Construct path (must match logic in sii_connector.py)
+    base_dir = os.path.join(os.getcwd(), "sii_data")
+    output_dir = os.path.join(base_dir, "generados")
+    file_path = os.path.join(output_dir, f"Planilla_{job_id}.xlsx")
+    
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Archivo no encontrado o proceso no finalizado")
+        
+    return FileResponse(
+        path=file_path, 
+        filename=f"Planilla_Impuestos_{job_id}.xlsx",
+        media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
 

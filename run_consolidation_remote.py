@@ -27,6 +27,14 @@ def run():
         # Upload app/email_sender.py
         print("Uploading app/email_sender.py...")
         sftp.put("app/email_sender.py", f"{REMOTE_PATH}/app/email_sender.py")
+
+        # Upload app/main.py
+        print("Uploading app/main.py...")
+        sftp.put("app/main.py", f"{REMOTE_PATH}/app/main.py")
+
+        # Upload app/templates/portal.html
+        print("Uploading app/templates/portal.html...")
+        sftp.put("app/templates/portal.html", f"{REMOTE_PATH}/app/templates/portal.html")
         
         # Upload examples image
         try:

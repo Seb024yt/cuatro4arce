@@ -94,23 +94,23 @@ def run_sii_process(job_id, data, update_status_func):
         consolidate_data(download_dir, output_file)
         
         # 4. Finish
-        update_status_func("Finalizado. Enviando correo...", "completed")
+        update_status_func("Finalizado. Preparando descarga...", "completed")
         
-        # Email sending logic
-        if data.correo:
-            subject = f"Planilla de Impuestos Generada - {data.rutEmpresa}"
-            body = f"""Hola,
-
-Adjunto encontrarás la planilla de impuestos generada para la empresa {data.rutEmpresa} correspondiente al periodo {data.mes} {data.anio}.
-
-Saludos,
-Tu Sistema de Impuestos
-"""
-            success, msg = send_email(data.correo, subject, body, output_file)
-            if success:
-                print(f"Email sent to {data.correo}")
-            else:
-                print(f"Failed to send email: {msg}")
+        # Email sending logic - DISABLED per user request
+        # if data.correo:
+        #     subject = f"Planilla de Impuestos Generada - {data.rutEmpresa}"
+        #     body = f"""Hola,
+        # 
+        # Adjunto encontrarás la planilla de impuestos generada para la empresa {data.rutEmpresa} correspondiente al periodo {data.mes} {data.anio}.
+        # 
+        # Saludos,
+        # Tu Sistema de Impuestos
+        # """
+        #     success, msg = send_email(data.correo, subject, body, output_file)
+        #     if success:
+        #         print(f"Email sent to {data.correo}")
+        #     else:
+        #         print(f"Failed to send email: {msg}")
         
     except Exception as e:
         print(f"Process Error: {e}")
