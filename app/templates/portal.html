@@ -556,15 +556,10 @@
                     
                     // Delay message to let user see 100% bar
                     setTimeout(() => {
-                        statusText.textContent = "¡Proceso Finalizado! Descargando archivo...";
+                        statusText.textContent = "¡Proceso Finalizado! Enviando correo...";
                         setTimeout(() => {
-                             // Trigger download
-                             window.location.href = `/api/download/${jobId}`;
-                             
-                             setTimeout(() => {
-                                alert("El archivo se ha descargado correctamente.");
-                                window.location.reload();
-                             }, 2000);
+                             alert("El proceso ha finalizado y el archivo ha sido enviado.");
+                             window.location.reload();
                         }, 1000);
                     }, 600);
                 } else if (data.state === 'failed') {
