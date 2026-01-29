@@ -18,6 +18,10 @@ def download_changes():
         files_to_sync = [
             "app/data_processor.py",
             "app/sii_connector.py",
+            "app/email_sender.py",
+            "app/main.py",
+            "app/templates/portal.html",
+            "app/templates/inicio.html",
             "deploy.py"
         ]
         

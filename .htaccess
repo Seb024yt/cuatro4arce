@@ -1,7 +1,0 @@
-RewriteEngine On
-RewriteBase /
-
-# Redirect all requests to index.php (which proxies to Python)
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php [QSA,L]
