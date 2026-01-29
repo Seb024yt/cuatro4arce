@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panel</title>
+  <meta name="description" content="Panel principal con navegacion a secciones." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #0b1020;
+      --bg2:#0a1633;
+      --card: rgba(255,255,255,.06);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --line: rgba(255,255,255,.12);
+      --brand: #7c5cff;
+      --brand2:#35d0ff;
+      --good:#2ee59d;
+      --shadow: 0 18px 60px rgba(0,0,0,.35);
+      --r-lg: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    html{
+      background:
+        radial-gradient(900px 480px at 10% 10%, rgba(124,92,255,.32), transparent 55%),
+        radial-gradient(900px 480px at 90% 20%, rgba(53,208,255,.24), transparent 55%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      background-attachment: fixed;
+    }
+    body{
+      margin:0;
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 130%;
+      color: var(--text);
+      background: transparent;
+      overflow-x: hidden;
+    }
+
+    .app{
+      min-height: 100%;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+    }
+
+    .sidebar{
+      position: sticky;
+      top: 0;
+      height: 100dvh;
+      padding: 22px 18px;
+      border-right: 1px solid var(--line);
+      background: rgba(0,0,0,.12);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      padding: 10px 10px 16px;
+    }
+    .logo{
+      width: 42px; height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(124,92,255,.9), rgba(53,208,255,.85));
+      box-shadow: 0 10px 30px rgba(124,92,255,.25);
+    }
+    .brand h1{
+      margin:0;
+      font-size: 16px;
+      letter-spacing: .2px;
+      line-height: 1.15;
+    }
+    .brand p{
+      margin:2px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .nav{
+      margin-top: 10px;
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+    }
+    .nav a{
+      text-decoration:none;
+      color: var(--text);
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      background: transparent;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+    .nav a:hover{
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.10);
+      transform: translateY(-1px);
+    }
+    .nav a[aria-current="page"]{
+      background: linear-gradient(135deg, rgba(124,92,255,.22), rgba(53,208,255,.16));
+      border-color: rgba(124,92,255,.28);
+    }
+    .ico{
+      width: 18px;
+      height: 18px;
+      opacity: .9;
+      flex: 0 0 18px;
+    }
+
+    .sidebar .card-mini{
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: var(--r-lg);
+      border: 1px solid var(--line);
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+    .card-mini .k{
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0 0 6px;
+    }
+    .card-mini .v{
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 0 10px;
+      letter-spacing: .2px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.12);
+      color: var(--muted);
+    }
+    .dot{
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--good);
+      box-shadow: 0 0 0 6px rgba(46,229,157,.12);
+    }
+
+    .main{
+      padding: 22px 18px 40px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+    }
+
+    .content-frame{
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(0,0,0,.14);
+      box-shadow: var(--shadow);
+    }
+
+    @media (max-width: 980px){
+      .app{ grid-template-columns: 1fr; }
+      .sidebar{
+        position: static;
+        height: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Navegacion principal">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Operaciones</h1>
+          <p>Panel ejecutivo</p>
+        </div>
+      </div>
+
+      <nav class="nav" id="panelNav">
+        <a href="inicio.html" data-view="inicio.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5Z" stroke="currentColor" stroke-width="1.6"/>
+          </svg>
+          Inicio
+        </a>
+
+        <a href="Actividades.html" data-view="Actividades.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          Actividad
+        </a>
+
+        <a href="Reportes.html" data-view="Reportes.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7 7h10v10H7V7Z" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M5 5h14v14H5V5Z" stroke="currentColor" stroke-width="1.2" opacity=".6"/>
+          </svg>
+          Reportes
+        </a>
+
+        <a href="Configuracion.html" data-view="Configuracion.html">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 2v4M12 18v4M4 12H2M22 12h-2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M7 17a7 7 0 1 1 10 0" stroke="currentColor" stroke-width="1.6" opacity=".8"/>
+          </svg>
+          Configuracion
+        </a>
+      </nav>
+
+      <div class="card-mini" role="note" aria-label="Estado del sistema">
+        <p class="k">Empresa</p>
+        <p class="v">Empresa Modelo</p>
+        <span class="badge"><span class="dot" aria-hidden="true"></span> 78.159.852</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <iframe
+        class="content-frame"
+        id="contentFrame"
+        title="Vista principal"
+        src="inicio.html"
+        loading="lazy"
+      ></iframe>
+    </main>
+  </div>
+
+  <script>
+    const nav = document.getElementById('panelNav');
+    const frame = document.getElementById('contentFrame');
+
+    function setActive(link){
+      nav.querySelectorAll('a[aria-current="page"]').forEach(a => {
+        a.removeAttribute('aria-current');
+      });
+      link.setAttribute('aria-current', 'page');
+    }
+
+    function hideFrameScrollbar(){
+      if(!frame) return;
+      try{
+        const doc = frame.contentDocument || frame.contentWindow.document;
+        if(!doc) return;
+        if(doc.getElementById('hide-scroll-style')) return;
+        const style = doc.createElement('style');
+        style.id = 'hide-scroll-style';
+        style.textContent = `
+          html, body {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+          }
+          ::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+          }
+        `;
+        doc.head.appendChild(style);
+      } catch (err){
+        // No-op if iframe content is not accessible.
+      }
+    }
+
+    nav.addEventListener('click', (e) => {
+      const link = e.target.closest('a[data-view]');
+      if(!link) return;
+      e.preventDefault();
+      const view = link.getAttribute('data-view') || link.getAttribute('href');
+      if(view && frame) frame.src = view;
+      setActive(link);
+    });
+
+    const initial = nav.querySelector('a[data-view="inicio.html"]') || nav.querySelector('a');
+    if(initial) setActive(initial);
+
+    frame?.addEventListener('load', hideFrameScrollbar);
+  </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+﻿/* Modal */
+    .modalBackdrop{
+      position: fixed;
+      inset: 0;
+      /* Darker + blurrier backdrop for edit focus */
+      background: rgba(5,8,20,.78);
+      backdrop-filter: blur(10px) saturate(115%);
+      -webkit-backdrop-filter: blur(10px) saturate(115%);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index: 999;
+    }
+    .modal{
+      width: min(980px, 100%);
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      box-shadow: 0 24px 90px rgba(0,0,0,.65);
+      overflow:hidden;
+    }
+    .modalHeader{
+      padding: 16px 16px 10px;
+      display:flex;
+      align-items:flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+    }
+    .modalHeader h4{
+      margin:0;
+      font-size: 14px;
+    }
+    .modalHeader p{
+      margin:6px 0 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .modalBody{
+      padding: 16px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 850px){
+      .modalBody{ grid-template-columns: 1fr; }
+    }
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+    }
+    .field label{
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .field input, .field select{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 12px 12px;
+      border-radius: 14px;
+      outline:none;
+      font-size: 13px;
+    }
+    .modalFooter{
+      padding: 14px 16px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      display:flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap:wrap;
+      background: rgba(0,0,0,.18);
+    }
+

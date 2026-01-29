@@ -1,0 +1,18 @@
+{
+  "target_period": {
+    "year": 2025,
+    "month": 4
+  },
+  "prev_period": {
+    "year": 2025,
+    "month": 3
+  },
+  "folio": null,
+  "codigo_77_remanente": null,
+  "results_url": "https://www4.sii.cl/rfiInternet/consulta/index.html#rfiSelFormularioPeriodo",
+  "compacto_url": null,
+  "evidence": {
+    "html_results": "storage\\companies\\77952887-1\\f29_remanente\\2025\\04\\RESULTADOS_202503.html",
+    "html_compacto": null
+  }
+}

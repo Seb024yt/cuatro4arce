@@ -1,0 +1,457 @@
+' === MACRO MAESTRA ===
+Sub MacroMaestraRCV()
+    Call DescargarRCVComprasYVentas
+    Call SincronizarCompras_y_Ventas
+    Call EliminarHojasNoAutorizadas
+    MsgBox "Proceso completo finalizado exitosamente.", vbInformation
+End Sub
+
+' === DESCARGAR RCV COMPRAS Y VENTAS (Y OPCIONALMENTE HONORARIOS) ===
+Sub DescargarRCVComprasYVentas()
+    Dim hojaDatos As Worksheet
+    Dim hojaCompras As Worksheet
+    Dim hojaVentas As Worksheet
+    Dim rut As String, clave As String, mesTexto As String, mesNumero As String, anio As String
+    Dim archivoCompras As String, archivoVentas As String
+    Dim downloadsFolder As String
+    Dim web As Object
+
+    Set hojaDatos = ThisWorkbook.Sheets("Datos")
+    Set hojaCompras = ThisWorkbook.Sheets("RCV Compra")
+    Set hojaVentas = ThisWorkbook.Sheets("RCV Venta")
+
+    downloadsFolder = Environ("USERPROFILE") & "\Downloads"
+    rut = hojaDatos.Range("C16").Value
+    clave = hojaDatos.Range("C18").Value
+    mesTexto = LCase(hojaDatos.Range("J6").Value)
+    anio = "2025"
+
+    mesNumero = MesTextoANumero(mesTexto)
+    If mesNumero = "" Then
+        MsgBox "Mes inválido en la celda J6", vbCritical
+        Exit Sub
+    End If
+    
+    Set web = CreateObject("Selenium.ChromeDriver")
+    web.Start
+    web.Get "https://zeusr.sii.cl//AUT2000/InicioAutenticacion/IngresoRutClave.html?https://misiir.sii.cl/cgi_misii/siihome.cgi"
+    Esperar 2
+    web.FindElementById("rutcntr").SendKeys rut
+    web.FindElementById("clave").SendKeys clave
+    web.FindElementById("bt_ingresar").Click
+    Esperar 1
+
+    web.Get "https://www4.sii.cl/consdcvinternetui/"
+    Esperar 1
+    web.FindElementById("periodoMes").Click
+    web.FindElementByXPath("//select[@id='periodoMes']/option[@value='" & mesNumero & "']").Click
+    web.FindElementByXPath("//select[@ng-model='periodoAnho']").SendKeys anio
+    web.FindElementByXPath("//button[contains(text(), 'Consultar')]").SendKeys " "
+    Esperar 1
+
+    web.FindElementByXPath("//button[contains(text(), 'Descargar Detalles')]").Click
+    Esperar 2
+    archivoCompras = ObtenerUltimoCSV(downloadsFolder)
+    If archivoCompras = "" Then
+        MsgBox "No se encontró archivo CSV de compras.", vbExclamation
+        Exit Sub
+    End If
+    PegarCSVEnHoja archivoCompras, hojaCompras
+    hojaCompras.Activate  ' ver los datos pegados
+
+    web.FindElementByXPath("//a[@ui-sref='venta']").Click
+    Esperar 1
+    web.FindElementByXPath("//button[contains(text(), 'Descargar Detalles')]").Click
+    Esperar 2
+    archivoVentas = ObtenerUltimoCSV(downloadsFolder, archivoCompras)
+    If archivoVentas = "" Then
+        MsgBox "No se encontró archivo CSV de ventas.", vbExclamation
+        Exit Sub
+    End If
+    PegarCSVEnHoja archivoVentas, hojaVentas
+    hojaVentas.Activate  ' ver los datos pegados
+
+    Call DescargarHonorariosDesdeSesion(web)
+    
+    web.Quit
+End Sub
+
+Sub DescargarHonorariosDesdeSesion(web As Object)
+    Dim downloadsFolder As String
+    Dim archivoHonorarios As String
+    Dim libroHonorarios As Workbook
+    Dim hojaDestino As Worksheet
+    Dim hojaDatos As Worksheet
+    Dim mesTexto As String, mesNumero As String, anio As String
+
+    Set hojaDatos = ThisWorkbook.Sheets("Datos")
+    Set hojaDestino = ThisWorkbook.Sheets("BH")
+
+    hojaDestino.Range("A5:J1000").Clear ' === Elimina todos los datos anteriores ===
+    hojaDestino.Activate
+    
+    mesTexto = LCase(hojaDatos.Range("J6").Value)
+    anio = hojaDatos.Range("K8").Value
+    If anio = "" Then anio = "2025"
+
+    mesNumero = MesTextoANumero(mesTexto)
+    If mesNumero = "00" Then
+        MsgBox "Mes inválido en celda J6.", vbCritical
+        Exit Sub
+    End If
+
+    downloadsFolder = Environ("USERPROFILE") & "\Downloads"
+
+    web.Get "https://loa.sii.cl/cgi_IMT/TMBCOC_MenuConsultasContribRec.cgi"
+    Esperar 1
+    web.FindElementByXPath("//select[@name='cbmesinformemensual']").SendKeys StrConv(mesTexto, vbProperCase)
+    Esperar 1
+    web.FindElementById("cmdconsultar1").Click
+    Esperar 1
+    web.FindElementByXPath("//input[@value='Ver informe como planilla electrónica']").Click
+    Esperar 1
+
+    archivoHonorarios = ObtenerUltimoXLS(downloadsFolder)
+    If archivoHonorarios = "" Then
+        MsgBox "No se encontró el archivo descargado de honorarios.", vbExclamation
+        Exit Sub
+    End If
+
+    Application.ScreenUpdating = False
+    Set libroHonorarios = Workbooks.Open(archivoHonorarios, ReadOnly:=True)
+    libroHonorarios.Sheets(1).UsedRange.Copy Destination:=hojaDestino.Range("A5")
+    libroHonorarios.Close SaveChanges:=False
+    Application.ScreenUpdating = True
+
+End Sub
+
+Sub SincronizarCompras_y_Ventas()
+    Dim wb As Workbook
+    Dim wsOrigen As Worksheet, wsDestino As Worksheet
+    Dim hojaTabla As Worksheet
+    Dim pt As PivotTable
+    Dim campo As PivotField
+    Dim filaDestino As Long
+
+    Set wb = ThisWorkbook
+    Set hojaDatos = wb.Sheets("Datos")
+    mesSeleccionado = UCase(Trim(hojaDatos.Range("J6").Value)) ' Ej: "JULIO"
+    
+        ' === Compras ===
+    
+    Set wsOrigen = wb.Sheets("RCV Compra")
+    Set wsDestino = wb.Sheets("Compras Acumuladas")
+    Set hojaTabla = wb.Sheets("Compras analisis")
+
+    wsOrigen.Range("A12:AA1000").Copy
+    wsDestino.Activate '  "Para ver hoja "Compras Acumuladas"
+    
+    With wsDestino
+        filaDestino = .Cells(.Rows.Count, "B").End(xlUp).Row + 1
+        Do While Not IsEmpty(.Cells(filaDestino, "B")) Or .Cells(filaDestino, "B").HasFormula
+            filaDestino = filaDestino + 1
+        Loop
+        .Range("B" & filaDestino).PasteSpecial Paste:=xlPasteValues
+        Application.CutCopyMode = False
+    End With
+    
+    wb.Save
+
+    Set pt = hojaTabla.PivotTables("TablaDinámica1")
+    pt.RefreshTable
+    
+    wb.Save
+
+    Set campo = pt.PivotFields("MES")
+    On Error Resume Next
+    campo.ClearAllFilters
+    pt.PivotFields("MES").PivotFilters.Add _
+        Type:=xlValueIsGreaterThan, _
+        DataField:=pt.PivotFields("Suma de Monto Neto"), _
+        Value1:=1
+    On Error GoTo 0
+      
+    Set pt = hojaTabla.PivotTables("TablaDinámica8")
+    pt.RefreshTable
+    
+    On Error Resume Next
+    Set campo = pt.PivotFields("MESES") ' Asegúrate que se llame "MESES" en la tabla dinámica
+    campo.ClearAllFilters
+    
+    pt.PivotFields("MESES").PivotFilters.Add _
+        Type:=xlValueIsGreaterThan, _
+        DataField:=pt.PivotFields("Suma de VALOR"), _
+        Value1:=1
+    
+    On Error GoTo 0
+
+       ' === Tabla dinámica adicional: TOP 5 COMPRAS MENSUALES ===
+       
+    Set pt = hojaTabla.PivotTables("TablaDinámica6")
+    pt.RefreshTable
+
+    On Error Resume Next
+    ' Limpiar filtros anteriores
+    pt.PivotFields("MES").ClearAllFilters
+    pt.PivotFields("Razon Social").ClearAllFilters
+
+    ' Aplicar filtro del mes seleccionado
+    pt.PivotFields("MES").CurrentPage = mesSeleccionado
+
+    ' Aplicar Top 5 por monto neto dentro del mes seleccionado
+    With pt.PivotFields("Razon Social")
+        .ClearAllFilters
+        .PivotFilters.Add _
+            Type:=xlTopCount, _
+            DataField:=pt.DataFields("Suma de Monto Total"), _
+            Value1:=5
+    End With
+    On Error GoTo 0
+    
+         ' === Tabla dinámica adicional: TOP 5 COMPRAS ANUALES ===
+    
+    Set pt = hojaTabla.PivotTables("TablaDinámica5")
+    pt.RefreshTable
+
+    On Error Resume Next
+    With pt.PivotFields("Razon Social")
+        .ClearAllFilters
+        .PivotFilters.Add _
+            Type:=xlTopCount, _
+            DataField:=pt.DataFields("Suma de Monto Total"), _
+            Value1:=5
+    End With
+    
+    wb.Save
+    
+        ' === Ventas ===
+        
+    Set wsOrigen = wb.Sheets("RCV Venta")
+    Set wsDestino = wb.Sheets("Ventas Acumuladas")
+    Set hojaTabla = wb.Sheets("Ventas analisis")
+
+    wsOrigen.Range("A12:AA1000").Copy
+    wsDestino.Activate '  "Para ver hoja "Ventas Acumuladas"
+    With wsDestino
+        filaDestino = .Cells(.Rows.Count, "B").End(xlUp).Row + 1
+        Do While Not IsEmpty(.Cells(filaDestino, "B")) Or .Cells(filaDestino, "B").HasFormula
+            filaDestino = filaDestino + 1
+        Loop
+        .Range("B" & filaDestino).PasteSpecial Paste:=xlPasteValues
+        Application.CutCopyMode = False
+    End With
+
+    wb.Save
+
+    Set pt = hojaTabla.PivotTables("TablaDinámica7")
+    pt.RefreshTable
+    
+    wb.Save
+
+    Set campo = pt.PivotFields("MES")
+    On Error Resume Next
+    campo.ClearAllFilters
+    pt.PivotFields("MES").PivotFilters.Add _
+        Type:=xlValueIsGreaterThan, _
+        DataField:=pt.PivotFields("Suma de Monto Neto"), _
+        Value1:=1
+    On Error GoTo 0
+      
+    Set pt = hojaTabla.PivotTables("TablaDinámica9")
+    pt.RefreshTable
+    
+    On Error Resume Next
+    Set campo = pt.PivotFields("MESES") ' Asegúrate que se llame "MESES" en la tabla dinámica
+    campo.ClearAllFilters
+    
+    pt.PivotFields("MESES").PivotFilters.Add _
+        Type:=xlValueIsGreaterThan, _
+        DataField:=pt.PivotFields("Suma de VALOR"), _
+        Value1:=1
+    
+    On Error GoTo 0
+
+       ' === Tabla dinámica adicional: TOP 5 VENTAS MENSUALES ===
+       
+    Set pt = hojaTabla.PivotTables("TablaDinámica3")
+    pt.RefreshTable
+
+    On Error Resume Next
+    ' Limpiar filtros anteriores
+    pt.PivotFields("MES").ClearAllFilters
+    pt.PivotFields("Razon Social").ClearAllFilters
+
+    ' Aplicar filtro del mes seleccionado
+    pt.PivotFields("MES").CurrentPage = mesSeleccionado
+
+    ' Aplicar Top 5 por monto neto dentro del mes seleccionado
+    With pt.PivotFields("Razon Social")
+        .ClearAllFilters
+        .PivotFilters.Add _
+            Type:=xlTopCount, _
+            DataField:=pt.DataFields("Suma de Monto Total"), _
+            Value1:=5
+    End With
+    On Error GoTo 0
+    
+         ' === Tabla dinámica adicional: TOP 5 VENTAS ANUALES ===
+    
+    Set pt = hojaTabla.PivotTables("TablaDinámica10")
+    pt.RefreshTable
+
+    On Error Resume Next
+    With pt.PivotFields("Razon Social")
+        .ClearAllFilters
+        .PivotFilters.Add _
+            Type:=xlTopCount, _
+            DataField:=pt.DataFields("Suma de Monto Total"), _
+            Value1:=5
+    End With
+    
+    wb.Save
+    
+    MsgBox "Compras sincronizadas y tabla dinámica actualizada correctamente con filtro aplicado.", vbInformation
+End Sub
+
+Function MesTextoANumero(mes As String) As String
+    Select Case LCase(mes)
+        Case "enero": MesTextoANumero = "01"
+        Case "febrero": MesTextoANumero = "02"
+        Case "marzo": MesTextoANumero = "03"
+        Case "abril": MesTextoANumero = "04"
+        Case "mayo": MesTextoANumero = "05"
+        Case "junio": MesTextoANumero = "06"
+        Case "julio": MesTextoANumero = "07"
+        Case "agosto": MesTextoANumero = "08"
+        Case "septiembre": MesTextoANumero = "09"
+        Case "octubre": MesTextoANumero = "10"
+        Case "noviembre": MesTextoANumero = "11"
+        Case "diciembre": MesTextoANumero = "12"
+        Case Else: MesTextoANumero = "00"
+    End Select
+End Function
+
+Function ObtenerUltimoCSV(carpetaPath As String, Optional archivoExcluir As String = "") As String
+    Dim fso As Object, carpeta As Object, archivo As Object
+    Dim fechaReciente As Date: fechaReciente = 0
+    Dim archivoMasReciente As String: archivoMasReciente = ""
+
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set carpeta = fso.GetFolder(carpetaPath)
+
+    For Each archivo In carpeta.Files
+        If LCase(fso.GetExtensionName(archivo.Name)) = "csv" Then
+            If archivo.DateLastModified > fechaReciente And archivo.Path <> archivoExcluir Then
+                fechaReciente = archivo.DateLastModified
+                archivoMasReciente = archivo.Path
+            End If
+        End If
+    Next
+
+    ObtenerUltimoCSV = archivoMasReciente
+End Function
+
+Function ObtenerUltimoXLS(carpeta As String) As String
+    Dim archivo As String
+    Dim ultimoArchivo As String
+    Dim ultimaFecha As Date
+
+    archivo = Dir(carpeta & "\*.xls")
+    Do While archivo <> ""
+        If FileDateTime(carpeta & "\" & archivo) > ultimaFecha Then
+            ultimaFecha = FileDateTime(carpeta & "\" & archivo)
+            ultimoArchivo = carpeta & "\" & archivo
+        End If
+        archivo = Dir
+    Loop
+    ObtenerUltimoXLS = ultimoArchivo
+End Function
+
+Sub PegarCSVEnHoja(rutaCSV As String, hojaDestino As Worksheet)
+    Dim tempSheet As Worksheet
+    Dim qt As QueryTable
+
+    hojaDestino.Range("A11:Z1000").ClearContents
+
+    Set tempSheet = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+    tempSheet.Visible = xlSheetVeryHidden
+
+    Set qt = tempSheet.QueryTables.Add(Connection:="TEXT;" & rutaCSV, Destination:=tempSheet.Range("A1"))
+    With qt
+        .TextFileParseType = xlDelimited
+        .TextFileSemicolonDelimiter = True
+        .Refresh BackgroundQuery:=False
+    End With
+
+    tempSheet.UsedRange.Copy Destination:=hojaDestino.Range("A11")
+    Application.DisplayAlerts = False
+    Application.DisplayAlerts = True
+
+    With hojaDestino
+        .Range("J12:AA1000").NumberFormat = "#,##0"
+        .Range("F12:F1000").NumberFormat = "0"
+        .Range("G12:I1000").NumberFormat = "dd/mm/yyyy"
+        .Range("J11:AA1000").NumberFormat = "general"
+    End With
+End Sub
+
+Sub Esperar(segundos As Double)
+    Dim t As Date
+    t = Now + TimeSerial(0, 0, segundos)
+    Do While Now < t
+        DoEvents
+    Loop
+End Sub
+
+Sub EliminarHojasNoAutorizadas()
+    Dim ws As Worksheet
+    Dim nombresPermitidos As Variant
+    Dim i As Long, nombreActual As String
+    Dim estaPermitida As Boolean
+
+    ' Lista blanca: solo estas hojas permanecerán
+    nombresPermitidos = Array("Datos", "BH", "IMPUESTO UNICO", "DIN", _
+        "Compras Acumuladas", "Compras analisis", "Ventas Acumuladas", "Ventas Analisis", _
+        "Base de datos", "Cálculo Remanente", "RCV Compra", "RCV Venta", _
+        "Boletas", "Resumen", "Compras", "Ventas")
+
+    Application.DisplayAlerts = False
+    On Error Resume Next
+
+    For Each ws In ThisWorkbook.Worksheets
+        nombreActual = ws.Name
+        estaPermitida = False
+
+        ' Verifica si el nombre de la hoja está en la lista blanca
+        For i = LBound(nombresPermitidos) To UBound(nombresPermitidos)
+            If LCase(nombreActual) = LCase(nombresPermitidos(i)) Then
+                estaPermitida = True
+                Exit For
+            End If
+        Next i
+
+        ' Si no está permitida, eliminarla
+        If Not estaPermitida Then
+            ' Eliminar posibles querytables
+            Dim qt As QueryTable
+            For Each qt In ws.QueryTables
+                qt.Delete
+            Next qt
+
+            ' Asegura que no sea la hoja activa
+            If ws.Index = 1 Then
+                ThisWorkbook.Sheets(2).Activate
+            Else
+                ThisWorkbook.Sheets(1).Activate
+            End If
+
+            ws.Visible = xlSheetVisible
+            ws.Delete
+        End If
+    Next ws
+
+    On Error GoTo 0
+    Application.DisplayAlerts = True
+
+End Sub
+

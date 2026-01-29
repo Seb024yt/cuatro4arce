@@ -1,0 +1,60 @@
+{
+  "dcv": {
+    "2026": {
+      "01": {
+        "compras": "storage\\companies\\77952887-1\\dcv\\2026\\01\\RCV_COMPRA_REGISTRO_77952887-1_202601.csv",
+        "ventas_detalles": "storage\\companies\\77952887-1\\dcv\\2026\\01\\RCV_VENTA_77952887-1_202601.csv"
+      }
+    },
+    "2025": {
+      "01": {
+        "compras": "storage\\companies\\77952887-1\\dcv\\2025\\01\\RCV_COMPRA_REGISTRO_77952887-1_202501.csv",
+        "ventas_detalles": "storage\\companies\\77952887-1\\dcv\\2025\\01\\RCV_VENTA_77952887-1_202501.csv"
+      },
+      "02": {
+        "compras": "storage\\companies\\77952887-1\\dcv\\2025\\02\\RCV_COMPRA_REGISTRO_77952887-1_202502.csv",
+        "ventas_detalles": "storage\\companies\\77952887-1\\dcv\\2025\\02\\RCV_VENTA_77952887-1_202502.csv"
+      },
+      "03": {
+        "compras": "storage\\companies\\77952887-1\\dcv\\2025\\03\\RCV_COMPRA_REGISTRO_77952887-1_202503.csv",
+        "ventas_detalles": "storage\\companies\\77952887-1\\dcv\\2025\\03\\RCV_VENTA_77952887-1_202503.csv"
+      },
+      "04": {
+        "compras": "storage\\companies\\77952887-1\\dcv\\2025\\04\\RCV_COMPRA_REGISTRO_77952887-1_202504.csv",
+        "ventas_detalles": "storage\\companies\\77952887-1\\dcv\\2025\\04\\RCV_VENTA_77952887-1_202504.csv"
+      },
+      "05": {
+        "compras": "storage\\companies\\77952887-1\\dcv\\2025\\05\\RCV_COMPRA_REGISTRO_77952887-1_202505.csv",
+        "ventas_detalles": "storage\\companies\\77952887-1\\dcv\\2025\\05\\RCV_VENTA_77952887-1_202505.csv"
+      },
+      "06": {
+        "compras": "storage\\companies\\77952887-1\\dcv\\2025\\06\\RCV_COMPRA_REGISTRO_77952887-1_202506.csv",
+        "ventas_detalles": "storage\\companies\\77952887-1\\dcv\\2025\\06\\RCV_VENTA_77952887-1_202506.csv"
+      },
+      "07": {
+        "compras": "storage\\companies\\77952887-1\\dcv\\2025\\07\\RCV_COMPRA_REGISTRO_77952887-1_202507.csv",
+        "ventas_detalles": "storage\\companies\\77952887-1\\dcv\\2025\\07\\RCV_VENTA_77952887-1_202507.csv"
+      },
+      "08": {
+        "compras": "storage\\companies\\77952887-1\\dcv\\2025\\08\\RCV_COMPRA_REGISTRO_77952887-1_202508.csv",
+        "ventas_detalles": "storage\\companies\\77952887-1\\dcv\\2025\\08\\RCV_VENTA_77952887-1_202508.csv"
+      },
+      "09": {
+        "compras": "storage\\companies\\77952887-1\\dcv\\2025\\09\\RCV_COMPRA_REGISTRO_77952887-1_202509.csv",
+        "ventas_detalles": "storage\\companies\\77952887-1\\dcv\\2025\\09\\RCV_VENTA_77952887-1_202509.csv"
+      },
+      "10": {
+        "compras": "storage\\companies\\77952887-1\\dcv\\2025\\10\\RCV_COMPRA_REGISTRO_77952887-1_202510.csv",
+        "ventas_detalles": "storage\\companies\\77952887-1\\dcv\\2025\\10\\RCV_VENTA_77952887-1_202510.csv"
+      },
+      "11": {
+        "compras": "storage\\companies\\77952887-1\\dcv\\2025\\11\\RCV_COMPRA_REGISTRO_77952887-1_202511.csv",
+        "ventas_detalles": "storage\\companies\\77952887-1\\dcv\\2025\\11\\RCV_VENTA_77952887-1_202511.csv"
+      },
+      "12": {
+        "compras": "storage\\companies\\77952887-1\\dcv\\2025\\12\\RCV_COMPRA_REGISTRO_77952887-1_202512.csv",
+        "ventas_detalles": "storage\\companies\\77952887-1\\dcv\\2025\\12\\RCV_VENTA_77952887-1_202512.csv"
+      }
+    }
+  }
+}

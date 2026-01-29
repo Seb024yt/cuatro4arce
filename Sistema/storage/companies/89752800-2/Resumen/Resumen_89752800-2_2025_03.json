@@ -1,0 +1,92 @@
+{
+  "company": "DISTRIBUIDORA DE ARTICULOS MEDICOS PEREZ SPA",
+  "period": {
+    "year": 2025,
+    "month": 3
+  },
+  "ventas": {
+    "items": [
+      {
+        "concepto": "Factura electronica",
+        "neto": 151077120,
+        "iva": 28704670,
+        "total": 179781790,
+        "code": 33
+      },
+      {
+        "concepto": "Factura exenta / no afecta",
+        "neto": 2512116,
+        "iva": 0,
+        "total": 2512116,
+        "code": 34
+      },
+      {
+        "concepto": "Nota de credito electronica",
+        "neto": -9133505,
+        "iva": -1735367,
+        "total": -10868872,
+        "code": 61
+      },
+      {
+        "concepto": "Boleta afecta electronica",
+        "neto": 1891,
+        "iva": 360,
+        "total": 2250,
+        "code": 39
+      }
+    ],
+    "total": {
+      "neto": 144457622,
+      "iva": 26969663,
+      "total": 171427284
+    }
+  },
+  "compras": {
+    "items": [
+      {
+        "concepto": "Factura electronica",
+        "neto": 107466275,
+        "iva": 20404731,
+        "total": 127898417,
+        "code": 33
+      },
+      {
+        "concepto": "Factura exenta / no afecta",
+        "neto": 2366044,
+        "iva": 0,
+        "total": 2366044,
+        "code": 34
+      },
+      {
+        "concepto": "Nota de credito electronica",
+        "neto": -45933,
+        "iva": -8727,
+        "total": -54660,
+        "code": 61
+      }
+    ],
+    "total": {
+      "neto": 109786386,
+      "iva": 20396004,
+      "total": 130209801
+    },
+    "remanente": null
+  },
+  "ppm": {
+    "base": 144457622,
+    "factor": 0.00125,
+    "pagado": 180572
+  },
+  "honorarios": {
+    "bruto": 8428261,
+    "retenido": 1224461,
+    "pagado": 7203800
+  },
+  "impuesto_unico": 0,
+  "totales": {
+    "iva_debito": 26969663,
+    "iva_credito": 20396004,
+    "iva_pagar_determinado": 6573659,
+    "total_a_pagar": 5529770
+  }
+}

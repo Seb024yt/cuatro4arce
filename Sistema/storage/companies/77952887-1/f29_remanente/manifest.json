@@ -1,0 +1,86 @@
+{
+  "remanente": {
+    "2026": {
+      "01": {
+        "prev": "202512",
+        "folio": null,
+        "codigo_77": null,
+        "json": "storage\\companies\\77952887-1\\f29_remanente\\2026\\01\\remanente_prev_202512_para_202601.json"
+      }
+    },
+    "2025": {
+      "01": {
+        "prev": "202412",
+        "folio": null,
+        "codigo_77": null,
+        "json": "storage\\companies\\77952887-1\\f29_remanente\\2025\\01\\remanente_prev_202412_para_202501.json"
+      },
+      "02": {
+        "prev": "202501",
+        "folio": null,
+        "codigo_77": null,
+        "json": "storage\\companies\\77952887-1\\f29_remanente\\2025\\02\\remanente_prev_202501_para_202502.json"
+      },
+      "03": {
+        "prev": "202502",
+        "folio": null,
+        "codigo_77": null,
+        "json": "storage\\companies\\77952887-1\\f29_remanente\\2025\\03\\remanente_prev_202502_para_202503.json"
+      },
+      "04": {
+        "prev": "202503",
+        "folio": null,
+        "codigo_77": null,
+        "json": "storage\\companies\\77952887-1\\f29_remanente\\2025\\04\\remanente_prev_202503_para_202504.json"
+      },
+      "05": {
+        "prev": "202504",
+        "folio": null,
+        "codigo_77": null,
+        "json": "storage\\companies\\77952887-1\\f29_remanente\\2025\\05\\remanente_prev_202504_para_202505.json"
+      },
+      "06": {
+        "prev": "202505",
+        "folio": null,
+        "codigo_77": null,
+        "json": "storage\\companies\\77952887-1\\f29_remanente\\2025\\06\\remanente_prev_202505_para_202506.json"
+      },
+      "07": {
+        "prev": "202506",
+        "folio": null,
+        "codigo_77": null,
+        "json": "storage\\companies\\77952887-1\\f29_remanente\\2025\\07\\remanente_prev_202506_para_202507.json"
+      },
+      "08": {
+        "prev": "202507",
+        "folio": null,
+        "codigo_77": null,
+        "json": "storage\\companies\\77952887-1\\f29_remanente\\2025\\08\\remanente_prev_202507_para_202508.json"
+      },
+      "09": {
+        "prev": "202508",
+        "folio": null,
+        "codigo_77": null,
+        "json": "storage\\companies\\77952887-1\\f29_remanente\\2025\\09\\remanente_prev_202508_para_202509.json"
+      },
+      "10": {
+        "prev": "202509",
+        "folio": null,
+        "codigo_77": null,
+        "json": "storage\\companies\\77952887-1\\f29_remanente\\2025\\10\\remanente_prev_202509_para_202510.json"
+      },
+      "11": {
+        "prev": "202510",
+        "folio": null,
+        "codigo_77": null,
+        "json": "storage\\companies\\77952887-1\\f29_remanente\\2025\\11\\remanente_prev_202510_para_202511.json"
+      },
+      "12": {
+        "prev": "202511",
+        "folio": null,
+        "codigo_77": null,
+        "json": "storage\\companies\\77952887-1\\f29_remanente\\2025\\12\\remanente_prev_202511_para_202512.json"
+      }
+    }
+  }
+}

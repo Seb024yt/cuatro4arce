@@ -1,0 +1,120 @@
+ACTÚA COMO: Ingeniero de Software Senior (Python) especializado en automatización tributaria Chile (SII) y generación de PDF.
+
+OBJETIVO:
+Implementar un generador de PDF “RESUMEN DECLARACIÓN DE IMPUESTOS MENSUALES <MES AÑO>” con el mismo layout visual de la imagen de referencia (barra morada superior, secciones Ventas/Compras/PPM/Honorarios/Impuesto Único/Total a Pagar), alimentado desde archivos descargados del SII (Compras y Ventas + Boletas de Honorarios + Formulario Compacto o fuente de remanente).
+
+ENTREGABLES (código):
+1) Un módulo Python (ej: backend/app/services/monthly_tax_pdf.py) con:
+   - dataclasses o pydantic models para el “Summary”
+   - funciones de carga/normalización de archivos (CSV/XLSX) con auto-detección de columnas
+   - agregación por “código de documento” (tipo DTE)
+   - cálculo de totales y checks de consistencia
+   - renderer PDF con ReportLab (A4) replicando el diseño de la imagen 1 (columna: Neto / IVA Débito o IVA Crédito / Total).
+2) Un CLI mínimo (opcional) o función pública:
+   generate_monthly_tax_summary_pdf(
+       company_name: str,
+       period_year: int,
+       period_month: int,
+       ventas_path: str,
+       compras_path: str,
+       boletas_honorarios_path: str | None,
+       formulario_compacto_path: str | None,
+       out_pdf_path: str,
+       ppm_factor: float | None = None,
+       remanente_override: int | None = None
+   ) -> dict  # retorna también un dict summary para auditoría.
+3) Pruebas rápidas (pytest) con data dummy (2-3 filas por tipo) y verificación de totales.
+
+FUENTES / ESTRUCTURA DE DATOS (ASUNCIONES):
+- Archivos de Compras y Ventas contienen al menos:
+  - codigo_tipo_documento (ej: “Tipo Doc”, “TipoDTE”, “Tipo Documento”, “Codigo”, etc.)
+  - neto (ej: “Neto”, “MntNeto”, “Monto Neto”)
+  - iva (ej: “IVA”, “MntIVA”, “Monto IVA”)
+  - total (ej: “Total”, “MntTotal”, “Monto Total”)
+  - fecha_emision (ej: “FchEmis”, “Fecha Emisión”) si el archivo NO viene filtrado por mes.
+- Debes implementar un “alias map” de nombres de columnas para detectar variantes.
+- Normalizar montos a int CLP (sin decimales), eliminar separadores (puntos/espacios), manejar negativos.
+
+MAPEO DE CÓDIGOS (CONFIGURABLE):
+- COMPRAS (IEC):
+  33 = Factura electrónica
+  34 = Factura exenta / no afecta electrónica
+  61 = Nota de crédito electrónica (resta)
+  56 = Nota de débito electrónica (suma)
+  45 = Factura de Compra (si aparece)
+- VENTAS (IEV):
+  33 = Factura electrónica
+  34 = Factura exenta / no afecta electrónica
+  61 = Nota de crédito electrónica (resta)
+  56 = Nota de débito electrónica (suma)
+  51 = Nota de débito (compatibilidad con tu tabla interna; tratar como débito si aparece)
+- VENTAS BOLETA:
+  39 = Boleta Afecta Electrónica
+  48 = Boleta Medio Electrónico (si viene como tipo doc en tu fuente; sumar como venta)
+  41 = Boleta Exenta Electrónica
+  43 = Liquidación de factura / Liquidación factura electrónica
+
+REGLAS DE SIGNO (CONTROL CRÍTICO):
+- Notas de crédito (60/61): aplicar signo negativo a Neto/IVA/Total.
+- Notas de débito (55/56 y también 51 si tu fuente lo usa como débito): signo positivo.
+- El resto: positivo.
+- Si el archivo ya trae montos negativos, NO dupliques el signo: define una estrategia consistente (ej: “si ya es negativo, respétalo”).
+
+REMANENTE IVA PERÍODO ANTERIOR (ANTES en “IVA CRÉDITO”):
+- Si remanente_override viene informado: usarlo.
+- Si NO viene informado, intentar extraerlo desde formulario_compacto_path:
+  - Si es HTML/TXT/PDF, buscar por regex patrones tipo “Remanente” + número (CLP) y parsear.
+  - Si no se puede extraer: dejar remanente = None => en el PDF mostrar BLANCO (no “0”, no “-”) en esa línea.
+- IMPORTANTÍSIMO: Este remanente se muestra en sección COMPRAS como una fila “Remanente IVA periodo anterior” antes de la fila total.
+
+BOLETAS DE HONORARIOS (RETENCIÓN):
+- Si boletas_honorarios_path existe:
+  - sumar Bruto, Retenido, Pagado (o Líquido) según columnas disponibles
+  - el “Retenido” debe incorporarse en el bloque “Total a Pagar Formulario” en la línea “Retención Boletas Honorarios”
+- Si no hay archivo o no hay retención: dejar en blanco/“-” según convención que definas (pero coherente con la imagen).
+
+PPM (PAGO PROVISIONAL MENSUAL):
+- Base imponible: por defecto usar “Ventas netas afectas” (sumatoria Neto de ventas código 33 +/- notas) o permitir parametrizar.
+- ppm_factor:
+  - si no viene, permitir default configurable (ej 0.00125 = 0,125%) pero documentar que puede variar por contribuyente.
+- PPM pagado = round(Base * factor)
+- Mostrar en PDF: “Ventas Netas”, “Factor PPM”, “PPM Pagado”.
+
+CÁLCULO “TOTAL A PAGAR FORMULARIO” (mínimo viable):
+- Construir un cuadro final con líneas:
+  - IVA a pagar determinado (si aplica)
+  - Pago provisional mensual (PPM)
+  - Retención Boletas Honorarios
+  - Impuesto Único Trabajadores (si existe input)
+  - Total a Pagar Formulario (resultado)
+- Para MVP, implementar:
+  total_pagar = max(0, iva_pagar_determinado) + ppm - retencion_honorarios + impuesto_unico
+  (documentar supuestos y dejar hooks para ajustar fórmula si el negocio lo requiere).
+
+DISEÑO PDF (ReportLab, A4):
+- Reproducir:
+  - Barra superior morada con texto blanco: “RESUMEN DECLARACIÓN DE IMPUESTOS MENSUALES <MES AÑO>”
+  - Debajo centrado: “<NOMBRE EMPRESA>”
+  - Sección “Ventas” con columnas: Neto | IVA Débito | Total
+  - Sección “Compras” con columnas: Neto | IVA Crédito | Total + fila “Remanente IVA periodo anterior”
+  - Fila total por sección en barra morada.
+  - Secciones inferiores (PPM, Honorarios, Impuesto Único) y cuadro final.
+- Formato montos:
+  - Separador de miles con punto (CLP): 154.990
+  - Ceros: mostrar “-” (como en imagen) excepto remanente sin dato => blanco.
+- Incluir numeritos/markers (1..5) NO es obligatorio (son referencias visuales), pero sí el contenido y layout.
+
+LOGGING Y AUDITORÍA:
+- Loggear: período, rutas de archivos, montos agregados por código, remanente detectado, retenciones, totales.
+- Retornar un dict “summary_json” además del PDF para trazabilidad.
+
+CRITERIOS DE ACEPTACIÓN (VERIFICACIONES AUTOMÁTICAS):
+- Para cada fila: si total no viene, calcular total = neto + iva; si viene, validar diferencia <= 1 CLP.
+- Total sección = suma filas (incluyendo signos).
+- PPM = round(base * factor).
+- PDF generado sin error y con montos ubicados en su sección correcta por código.
+
+GENERAR CÓDIGO AHORA:
+- Produce el código completo del módulo + ejemplo de uso + tests mínimos.
+- NO inventes dependencias no estándar: usar pandas + reportlab + (opcional) pdfplumber si necesitas leer texto de PDF.
+- Mantén funciones pequeñas y comentadas.

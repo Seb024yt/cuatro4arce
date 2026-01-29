@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reportes</title>
+  <meta name="description" content="Estado de F29 pagados y descarga de reportes." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #0b1020;
+      --bg2:#0a1633;
+      --card: rgba(255,255,255,.06);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --line: rgba(255,255,255,.12);
+      --brand: #7c5cff;
+      --brand2:#35d0ff;
+      --good:#2ee59d;
+      --warn:#ffd166;
+      --bad:#ff5c7a;
+      --shadow: 0 18px 60px rgba(0,0,0,.35);
+      --r-xl: 22px;
+      --gap: 18px;
+      --max: 1380px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    html{
+      background:
+        radial-gradient(900px 480px at 10% 10%, rgba(124,92,255,.32), transparent 55%),
+        radial-gradient(900px 480px at 90% 20%, rgba(53,208,255,.24), transparent 55%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      background-attachment: fixed;
+    }
+    body{
+      margin:0;
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 180%;
+      color: var(--text);
+      background: transparent;
+      overflow-x: hidden;
+    }
+
+    .main{
+      padding: 18px 12px 32px;
+    }
+    .wrap{
+      max-width: var(--max);
+      margin: 0 auto;
+      display:flex;
+      flex-direction:column;
+      gap: var(--gap);
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: var(--r-xl);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      backdrop-filter: blur(10px);
+    }
+    .topbar .left{
+      display:flex;
+      flex-direction:column;
+      gap: 2px;
+    }
+    .topbar .title{
+      margin:0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .topbar .subtitle{
+      margin:0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .reveal{
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity .5s ease, transform .5s ease;
+      will-change: opacity, transform;
+    }
+    .reveal.is-visible{
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .load-line{
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      pointer-events: none;
+      background: linear-gradient(90deg, transparent, rgba(53,208,255,.15), rgba(124,92,255,.85), rgba(53,208,255,.15), transparent);
+      filter: blur(2.5px);
+      transform: scaleX(0);
+      transform-origin: center;
+      animation: load-line 1.4s ease forwards;
+      z-index: 999;
+    }
+    @keyframes load-line{
+      0%{ transform: scaleX(0); opacity: 0; filter: blur(6px); }
+      60%{ transform: scaleX(1); opacity: .95; filter: blur(1.5px); }
+      100%{ opacity: 0; filter: blur(0); }
+    }
+    .chip{
+      font-size: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--muted);
+      background: rgba(0,0,0,.12);
+      white-space: nowrap;
+    }
+    .btn{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      cursor: pointer;
+    }
+    .btn.primary{
+      border-color: rgba(124,92,255,.35);
+      background: linear-gradient(135deg, rgba(124,92,255,.22), rgba(53,208,255,.12));
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: var(--gap);
+    }
+    .card{
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: var(--r-xl);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .table-card{
+      grid-column: span 12;
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+    }
+    .line-chart{
+      width: 100%;
+      height: 220px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      background:
+        radial-gradient(220px 120px at 15% 15%, rgba(53,208,255,.15), transparent 60%),
+        rgba(0,0,0,.14);
+      padding: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    .line-chart svg{
+      width: 100%;
+      height: 100%;
+      display:block;
+    }
+    .months{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 10px;
+      font-size: 11px;
+      color: var(--muted);
+      padding: 0 6px;
+    }
+
+    .table{
+      width: 100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .table th, .table td{
+      padding: 12px 12px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .table th{
+      text-align:left;
+      color: rgba(255,255,255,.82);
+      background: rgba(0,0,0,.14);
+      font-weight: 700;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .pill .s{
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--good);
+    }
+    .pill.warn .s{ background: var(--warn); }
+    .pill.bad .s{ background: var(--bad); }
+
+    .summary{
+      display:grid;
+      gap: 10px;
+      border: 1px dashed rgba(255,255,255,.18);
+      border-radius: 16px;
+      padding: 12px;
+      background: rgba(0,0,0,.14);
+    }
+    .summary .row{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+    }
+    .muted{ color: var(--muted); }
+
+    .download-card{
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      padding: 12px;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+    .select{
+      width: 100%;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+    }
+
+    @media (max-width: 980px){
+      .table-card{ grid-column: span 12; }
+    }
+    @media (max-width: 560px){
+      .topbar{ flex-direction: column; align-items:flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="load-line" aria-hidden="true"></div>
+  <main class="main">
+    <div class="wrap">
+      <header class="topbar">
+        <div class="left">
+          <p class="title">Reportes</p>
+          <p class="subtitle">F29 pagados y reportes por mes</p>
+        </div>
+        <span class="chip">Periodo 2026</span>
+      </header>
+
+      <section class="grid">
+        <section class="card table-card" aria-label="Tabla F29 pagados">
+          <h2 style="margin:0; font-size: 14px;">Evolucion del pago de IVA</h2>
+          <div class="line-chart" role="img" aria-label="Grafico de lineas de IVA pagado">
+            <svg viewBox="0 0 600 180" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="lineGlow" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#35d0ff"/>
+                  <stop offset="100%" stop-color="#7c5cff"/>
+                </linearGradient>
+                <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(53,208,255,.35)"/>
+                  <stop offset="100%" stop-color="rgba(53,208,255,0)"/>
+                </linearGradient>
+              </defs>
+
+              <line x1="0" y1="150" x2="600" y2="150" stroke="rgba(255,255,255,.08)" stroke-width="1" />
+              <line x1="0" y1="110" x2="600" y2="110" stroke="rgba(255,255,255,.06)" stroke-width="1" />
+              <line x1="0" y1="70" x2="600" y2="70" stroke="rgba(255,255,255,.05)" stroke-width="1" />
+
+              <polyline
+                fill="none"
+                stroke="url(#lineGlow)"
+                stroke-width="3.5"
+                points=""
+                id="ivaLine"
+              />
+              <path id="ivaArea" fill="url(#areaFill)" d="" />
+              <circle id="ivaPoint" cx="20" cy="150" r="6" fill="#35d0ff" />
+              <circle id="ivaPointGlow" cx="20" cy="150" r="11" fill="rgba(53,208,255,.18)" />
+            </svg>
+          </div>
+          <div class="months" aria-hidden="true">
+            <span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span>
+            <span>Jul</span><span>Ago</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dic</span>
+          </div>
+          <h2 style="margin:0 0 10px; font-size: 14px;">Estado F29 pagados</h2>
+          <table class="table" id="ivaTable">
+            <thead>
+              <tr>
+                <th>Mes</th>
+                <th>Monto</th>
+                <th>Estado</th>
+                <th>Generar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Enero</td>
+                <td>$  239.144</td>
+                <td><span class="pill"><span class="s"></span> Pendiente</span></td>
+                <td><button class="btn primary" type="button">Generar</button></td>
+              </tr>
+              <tr>
+                <td>Febrero</td>
+                <td>$ 0</td>
+                <td><span class="pill bad"><span class="s"></span> Pendiente</span></td>
+                <td><button class="btn primary" type="button">Generar</button></td>
+              </tr>
+              <tr>
+                <td>Marzo</td>
+                <td>$ 0</td>
+                <td><span class="pill bad"><span class="s"></span> Pendiente</span></td>
+                <td><button class="btn primary" type="button">Generar</button></td>
+              </tr>
+              <tr>
+                <td>Abril</td>
+                <td>$ 0</td>
+                <td><span class="pill bad"><span class="s"></span> Pendiente</span></td>
+                <td><button class="btn primary" type="button">Generar</button></td>
+              </tr>
+              <tr>
+                <td>Mayo</td>
+                <td>$ 0</td>
+                <td><span class="pill bad"><span class="s"></span> Pendiente</span></td>
+                <td><button class="btn primary" type="button">Generar</button></td>
+              </tr>
+              <tr>
+                <td>Junio</td>
+                <td>$ 0</td>
+                <td><span class="pill bad"><span class="s"></span> Pendiente</span></td>
+                <td><button class="btn primary" type="button">Generar</button></td>
+              </tr>
+              <tr>
+                <td>Julio</td>
+                <td>$ 0</td>
+                <td><span class="pill bad"><span class="s"></span> Pendiente</span></td>
+                <td><button class="btn primary" type="button">Generar</button></td>
+              </tr>
+              <tr>
+                <td>Agosto</td>
+                <td>$ 0</td>
+                <td><span class="pill bad"><span class="s"></span> Pendiente</span></td>
+                <td><button class="btn primary" type="button">Generar</button></td>
+              </tr>
+              <tr>
+                <td>Septiembre</td>
+                <td>$ 0</td>
+                <td><span class="pill bad"><span class="s"></span> Pendiente</span></td>
+                <td><button class="btn primary" type="button">Generar</button></td>
+              </tr>
+              <tr>
+                <td>Octubre</td>
+                <td>$ 0</td>
+                <td><span class="pill bad"><span class="s"></span> Pendiente</span></td>
+                <td><button class="btn primary" type="button">Generar</button></td>
+              </tr>
+              <tr>
+                <td>Noviembre</td>
+                <td>$ 0</td>
+                <td><span class="pill bad"><span class="s"></span> Pendiente</span></td>
+                <td><button class="btn primary" type="button">Generar</button></td>
+              </tr>
+              <tr>
+                <td>Diciembre</td>
+                <td>$ 0</td>
+                <td><span class="pill bad"><span class="s"></span> Pendiente</span></td>
+                <td><button class="btn primary" type="button">Generar</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const monthOrder = [
+      'Enero','Febrero','Marzo','Abril','Mayo','Junio',
+      'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'
+    ];
+
+    function parseAmount(text){
+      const clean = text.replace(/[^\d]/g, '');
+      return clean ? Number(clean) : 0;
+    }
+
+    function updateIvaChart(){
+      const table = document.getElementById('ivaTable');
+      const line = document.getElementById('ivaLine');
+      const area = document.getElementById('ivaArea');
+      const point = document.getElementById('ivaPoint');
+      const pointGlow = document.getElementById('ivaPointGlow');
+      if(!table || !line || !area || !point || !pointGlow) return;
+
+      const rows = Array.from(table.querySelectorAll('tbody tr'));
+      const valuesByMonth = {};
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if(cells.length < 2) return;
+        const month = cells[0].innerText.trim();
+        const amount = parseAmount(cells[1].innerText);
+        valuesByMonth[month] = amount;
+      });
+
+      const values = monthOrder.map(m => valuesByMonth[m] || 0);
+      const maxVal = Math.max(1, ...values);
+      const minY = 40;
+      const maxY = 150;
+      const leftX = 20;
+      const rightX = 570;
+      const step = (rightX - leftX) / (monthOrder.length - 1);
+
+      const points = values.map((v, i) => {
+        const ratio = v / maxVal;
+        const y = maxY - (maxY - minY) * ratio;
+        const x = leftX + step * i;
+        return `${x},${y}`;
+      });
+
+      line.setAttribute('points', points.join(' '));
+      const areaPath = `M${points[0].replace(',', ' ')} L${points.slice(1).join(' L')} L${rightX} 170 L${leftX} 170 Z`;
+      area.setAttribute('d', areaPath);
+
+      let highlightIndex = values.findIndex(v => v > 0);
+      if(highlightIndex === -1) highlightIndex = 0;
+      const [px, py] = points[highlightIndex].split(',').map(Number);
+      point.setAttribute('cx', px);
+      point.setAttribute('cy', py);
+      pointGlow.setAttribute('cx', px);
+      pointGlow.setAttribute('cy', py);
+    }
+
+    updateIvaChart();
+
+    const revealItems = document.querySelectorAll('.topbar, .card');
+    revealItems.forEach((el, i) => {
+      el.classList.add('reveal');
+      el.style.transitionDelay = `${i * 80}ms`;
+    });
+    requestAnimationFrame(() => {
+      revealItems.forEach(el => el.classList.add('is-visible'));
+    });
+  </script>
+</body>
+</html>

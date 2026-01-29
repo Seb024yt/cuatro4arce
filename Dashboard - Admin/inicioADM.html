@@ -1,0 +1,1301 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Dashboard | Clave Tributaria & SII-AI</title>
+  <style>
+    :root{
+      --bg: #0b1220;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.09);
+      --stroke: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.65);
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --bad:  #ef4444;
+      --accent: #7c3aed;
+      --accent2:#22d3ee;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius: 18px;
+      --radius-lg: 26px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(900px 500px at 20% 15%, rgba(124,58,237,.35), transparent 60%),
+        radial-gradient(900px 520px at 80% 20%, rgba(34,211,238,.25), transparent 60%),
+        radial-gradient(900px 600px at 50% 90%, rgba(255,255,255,.08), transparent 60%),
+        var(--bg);
+    }
+
+    /* Layout */
+    .app{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns: 270px 1fr 340px;
+      gap: 18px;
+      padding: 18px;
+    }
+
+    @media (max-width: 1100px){
+      .app{ grid-template-columns: 260px 1fr; }
+      .right{ display:none; }
+    }
+    @media (max-width: 760px){
+      .app{ grid-template-columns: 1fr; }
+      .left{ position: sticky; top: 0; z-index: 20; }
+    }
+
+    .panel{
+      background: linear-gradient(180deg, var(--panel), rgba(255,255,255,.035));
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .left{
+      padding: 16px;
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(124,58,237,.18), rgba(34,211,238,.08));
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .brand .logo{
+      width: 42px; height: 42px; border-radius: 14px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.25), transparent 55%),
+        linear-gradient(135deg, rgba(124,58,237,.9), rgba(34,211,238,.7));
+      box-shadow: 0 12px 30px rgba(124,58,237,.25);
+    }
+    .brand h1{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.3px;
+    }
+    .brand p{
+      margin:2px 0 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .nav{
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+      padding: 6px;
+    }
+    .nav .sectionTitle{
+      margin: 10px 8px 6px;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+    .nav button{
+      width:100%;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor:pointer;
+      transition: .2s ease;
+    }
+    .nav button:hover{
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.08);
+    }
+    .nav button.active{
+      background: linear-gradient(135deg, rgba(124,58,237,.22), rgba(34,211,238,.08));
+      border-color: rgba(124,58,237,.35);
+    }
+    .nav .meta{
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .chip{
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .main{
+      padding: 16px;
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+    }
+
+    .topbar{
+      display:flex;
+      gap: 12px;
+      align-items:center;
+      justify-content: space-between;
+      padding: 12px 12px 6px;
+    }
+    .titleWrap h2{
+      margin:0;
+      font-size: 16px;
+      letter-spacing:.2px;
+    }
+    .titleWrap p{
+      margin:6px 0 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .actions{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .btn{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      transition: .2s ease;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .btn:hover{ background: rgba(255,255,255,.10); }
+    .btn.primary{
+      border-color: rgba(124,58,237,.45);
+      background: linear-gradient(135deg, rgba(124,58,237,.85), rgba(34,211,238,.35));
+      box-shadow: 0 14px 35px rgba(124,58,237,.22);
+    }
+    .btn.primary:hover{ filter: brightness(1.05); }
+    .btn.danger{
+      border-color: rgba(239,68,68,.35);
+      background: rgba(239,68,68,.12);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 14px;
+    }
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      padding: 14px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+    }
+    .card h3{
+      margin:0 0 10px 0;
+      font-size: 13px;
+      color: rgba(255,255,255,.88);
+      letter-spacing: .2px;
+    }
+    .kpis{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 520px){
+      .kpis{ grid-template-columns: 1fr; }
+    }
+    .kpi{
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+    }
+    .kpi .label{ font-size: 11px; color: var(--muted); letter-spacing:.08em; text-transform: uppercase;}
+    .kpi .value{ margin-top: 8px; font-size: 18px; font-weight: 800; }
+    .kpi .hint{ margin-top: 6px; font-size: 12px; color: var(--muted); }
+
+    .toolbar{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      justify-content: space-between;
+      flex-wrap:wrap;
+      padding: 12px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+    }
+    .toolbar .leftTools{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .toolbar input, .toolbar select{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      outline: none;
+      font-size: 12px;
+      min-width: 220px;
+    }
+    .toolbar select{ min-width: 190px; }
+
+    table{
+      width:100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    thead th{
+      text-align:left;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 12px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+    }
+    tbody td{
+      padding: 12px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: 13px;
+      vertical-align: middle;
+    }
+    tbody tr:hover{ background: rgba(255,255,255,.05); }
+    .mono{ font-family: var(--mono); font-size: 12px; color: rgba(255,255,255,.85); }
+    .muted{ color: var(--muted); }
+    .pill{
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .dot{
+      width:8px; height:8px; border-radius: 999px; display:inline-block;
+      background: rgba(255,255,255,.35);
+    }
+    .dot.good{ background: var(--good); }
+    .dot.warn{ background: var(--warn); }
+    .dot.bad{ background: var(--bad); }
+
+    .rowActions{ display:flex; gap: 8px; justify-content:flex-end; }
+    .rowActions .btn{ padding: 8px 10px; border-radius: 12px; }
+
+    .right{
+      padding: 16px;
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+    }
+
+    .segmented{
+      display:flex;
+      gap: 8px;
+      padding: 6px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+    }
+    .segmented button{
+      flex:1;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text);
+      padding: 10px 10px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight: 800;
+      font-size: 12px;
+      transition: .2s ease;
+    }
+    .segmented button.active{
+      background: linear-gradient(135deg, rgba(124,58,237,.25), rgba(34,211,238,.08));
+      border-color: rgba(124,58,237,.35);
+    }
+
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+    .item{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: 18px;
+      padding: 12px;
+      display:flex;
+      gap: 10px;
+      align-items:flex-start;
+      justify-content: space-between;
+    }
+    .item .info{
+      display:flex;
+      flex-direction:column;
+      gap: 6px;
+      min-width: 0;
+    }
+    .item .name{
+      font-weight: 900;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+    }
+    .item .sub{
+      font-size: 12px;
+      color: var(--muted);
+      display:flex;
+      gap: 10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .item .sub .mono{ font-size: 11px; }
+    .item .btn{ padding: 8px 10px; border-radius: 12px; }
+
+    /* Modal */
+    .modalBackdrop{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.6);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index: 999;
+    }
+    .modal{
+      width: min(980px, 100%);
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      box-shadow: 0 24px 90px rgba(0,0,0,.65);
+      overflow:hidden;
+    }
+    .modalHeader{
+      padding: 16px 16px 10px;
+      display:flex;
+      align-items:flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+    }
+    .modalHeader h4{
+      margin:0;
+      font-size: 14px;
+    }
+    .modalHeader p{
+      margin:6px 0 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .modalBody{
+      padding: 16px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 850px){
+      .modalBody{ grid-template-columns: 1fr; }
+    }
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+    }
+    .field label{
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .field input, .field select{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 12px 12px;
+      border-radius: 14px;
+      outline:none;
+      font-size: 13px;
+    }
+    .modalFooter{
+      padding: 14px 16px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      display:flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap:wrap;
+      background: rgba(0,0,0,.18);
+    }
+    .hintBox{
+      border: 1px dashed rgba(255,255,255,.16);
+      background: rgba(0,0,0,.14);
+      padding: 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <!-- LEFT: Navegación / Gobierno del panel -->
+    <aside class="panel left">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Consola Administrativa</h1>
+          <p>Gestión operativa • Clave Tributaria & SII-AI</p>
+        </div>
+      </div>
+
+      <div class="nav">
+        <div class="sectionTitle">Módulos</div>
+
+        <button id="nav-dashboard" class="active" data-view="dashboard">
+          <span>Visión General</span>
+          <span class="meta">KPIs</span>
+        </button>
+
+        <button id="nav-clave" data-view="clave">
+          <span>Clave Tributaria</span>
+          <span class="meta">F29 masivo</span>
+        </button>
+
+        <button id="nav-siiai" data-view="siiai">
+          <span>SII-AI</span>
+          <span class="meta">Clientes & planes</span>
+        </button>
+
+        <div class="sectionTitle">Operación</div>
+
+        <button data-view="auditoria">
+          <span>Auditoría</span>
+          <span class="meta">Logs</span>
+        </button>
+
+        <button data-view="config">
+          <span>Configuración</span>
+          <span class="meta">Seguridad</span>
+        </button>
+      </div>
+
+      <div class="card" style="margin-top:auto;">
+        <h3>Estado del sistema</h3>
+        <div class="pill"><span class="dot good"></span>Servicios activos <span class="muted">• OK</span></div>
+        <div style="height:10px"></div>
+        <div class="hintBox">
+          Recomendación de gobierno: mantener control de accesos (roles), rotación de credenciales y trazabilidad
+          por operación (generación F29 / cambios de plan).
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN: Contenido -->
+    <main class="panel main">
+      <div class="topbar">
+        <div class="titleWrap">
+          <h2 id="pageTitle">Visión General</h2>
+          <p id="pageSubtitle">Monitoreo ejecutivo y operación diaria. Seleccione unidad y ejecute acciones con trazabilidad.</p>
+        </div>
+        <div class="actions">
+          <span class="chip" id="activeUnitChip">Unidad: Consola</span>
+          <button class="btn" id="btnExport">Exportar</button>
+          <button class="btn primary" id="btnQuickAction">Acción rápida</button>
+        </div>
+      </div>
+
+      <!-- DASHBOARD VIEW -->
+      <section id="view-dashboard" style="display:block;">
+        <div class="grid">
+          <div class="card">
+            <h3>Indicadores clave</h3>
+            <div class="kpis">
+              <div class="kpi">
+                <div class="label">Clave Tributaria • empresas</div>
+                <div class="value" id="kpiClaveEmpresas">—</div>
+                <div class="hint">Cartera total administrada</div>
+              </div>
+              <div class="kpi">
+                <div class="label">F29 • pendientes</div>
+                <div class="value" id="kpiF29Pendientes">—</div>
+                <div class="hint">Por procesar / validar</div>
+              </div>
+              <div class="kpi">
+                <div class="label">SII-AI • suscripciones</div>
+                <div class="value" id="kpiSiiaiClientes">—</div>
+                <div class="hint">Clientes activos</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Checklist operacional</h3>
+            <div class="hintBox">
+              <b>Clave Tributaria:</b> validar credenciales, ejecutar lote F29, descargar masivo, archivar evidencias.<br/>
+              <b>SII-AI:</b> monitorear vencimientos, upgrades, control de acceso a credenciales, auditoría de cambios.<br/><br/>
+              Estándar recomendado: <span class="mono">log_id</span> por acción + usuario operador + timestamp.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Actividad reciente (demo)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Unidad</th>
+                <th>Acción</th>
+                <th>Resultado</th>
+              </tr>
+            </thead>
+            <tbody id="activityBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CLAVE TRIBUTARIA VIEW -->
+      <section id="view-clave" style="display:none;">
+        <div class="card">
+          <h3>Clave Tributaria • Generación y descarga masiva F29</h3>
+
+          <div class="toolbar">
+            <div class="leftTools">
+              <input id="claveSearch" placeholder="Buscar por empresa o RUT…" />
+              <select id="claveFilter">
+                <option value="all">Estado: Todos</option>
+                <option value="pending">Pendiente</option>
+                <option value="ready">Listo</option>
+              </select>
+            </div>
+            <div class="leftTools">
+              <button class="btn" id="btnSelectAllClave">Seleccionar todo</button>
+              <button class="btn primary" id="btnGenerateF29">Generar F29 (lote)</button>
+              <button class="btn" id="btnDownloadF29">Descargar masivo</button>
+            </div>
+          </div>
+
+          <div style="height:12px"></div>
+
+          <table>
+            <thead>
+              <tr>
+                <th style="width:44px;">Sel</th>
+                <th>Empresa</th>
+                <th>RUT</th>
+                <th>Periodo</th>
+                <th>Estado</th>
+                <th style="width:180px; text-align:right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="claveTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SII-AI VIEW -->
+      <section id="view-siiai" style="display:none;">
+        <div class="card">
+          <h3>SII-AI • Clientes, cuentas y control de planes</h3>
+
+          <div class="toolbar">
+            <div class="leftTools">
+              <input id="siiaiSearch" placeholder="Buscar por empresa o RUT…" />
+              <select id="siiaiStatus">
+                <option value="all">Estado: Todos</option>
+                <option value="active">Activo</option>
+                <option value="expiring">Por vencer</option>
+                <option value="expired">Vencido</option>
+              </select>
+            </div>
+            <div class="leftTools">
+              <button class="btn" id="btnAddClient">Agregar cliente</button>
+              <button class="btn primary" id="btnBulkUpgrade">Upgrade masivo</button>
+            </div>
+          </div>
+
+          <div style="height:12px"></div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Empresa</th>
+                <th>RUT</th>
+                <th>Contraseña</th>
+                <th>Plan</th>
+                <th>Incorporación</th>
+                <th>Finalización</th>
+                <th>Estado</th>
+                <th style="width:170px; text-align:right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="siiaiTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Placeholder views -->
+      <section id="view-auditoria" style="display:none;">
+        <div class="card">
+          <h3>Auditoría</h3>
+          <div class="hintBox">
+            Aquí puede incorporar un visor de logs: filtros por usuario operador, unidad, acción, rango de fechas, y exportación CSV/JSON.
+          </div>
+        </div>
+      </section>
+
+      <section id="view-config" style="display:none;">
+        <div class="card">
+          <h3>Configuración</h3>
+          <div class="hintBox">
+            Recomendado: RBAC (roles), 2FA, rotación de claves, cifrado de secretos en servidor, y bitácora inmutable de cambios de planes.
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- RIGHT: Selector de unidad + lista contextual (tu requisito: empresas a la derecha) -->
+    <aside class="panel right">
+      <div>
+        <h3 style="margin:6px 2px 10px; font-size:13px;">Unidades operativas</h3>
+        <div class="segmented" role="tablist" aria-label="Selector de unidad">
+          <button id="segClave" class="active" data-unit="clave" role="tab">Clave Tributaria</button>
+          <button id="segSiiai" data-unit="siiai" role="tab">SII-AI</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 id="rightTitle">Clave Tributaria • Empresas</h3>
+        <div class="hintBox" id="rightHint">
+          Contexto: cartera de empresas a las cuales se les genera F29 automático y descarga masiva.
+        </div>
+      </div>
+
+      <div class="list" id="rightList"></div>
+    </aside>
+  </div>
+
+  <!-- MODAL ÚNICO (tu requisito: “editar” abre un mismo sistema reutilizable) -->
+  <div class="modalBackdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modalHeader">
+        <div>
+          <h4 id="modalTitle">Editar registro</h4>
+          <p id="modalSubtitle">Actualice atributos y aplique cambios con trazabilidad.</p>
+        </div>
+        <button class="btn" id="btnCloseModal">Cerrar</button>
+      </div>
+
+      <div class="modalBody">
+        <div class="field">
+          <label>Unidad</label>
+          <input id="m_unit" disabled />
+        </div>
+
+        <div class="field">
+          <label>Empresa</label>
+          <input id="m_name" placeholder="Nombre empresa" />
+        </div>
+
+        <div class="field">
+          <label>RUT</label>
+          <input id="m_rut" placeholder="11.111.111-1" class="mono" />
+        </div>
+
+        <div class="field">
+          <label>Contraseña (SII-AI)</label>
+          <input id="m_password" placeholder="••••••••" class="mono" />
+        </div>
+
+        <div class="field">
+          <label>Plan (SII-AI)</label>
+          <select id="m_plan">
+            <option value="">—</option>
+            <option value="Starter">Starter</option>
+            <option value="Pro">Pro</option>
+            <option value="Enterprise">Enterprise</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Incorporación (SII-AI)</label>
+          <input id="m_start" type="date" />
+        </div>
+
+        <div class="field">
+          <label>Finalización (SII-AI)</label>
+          <input id="m_end" type="date" />
+        </div>
+
+        <div class="field">
+          <label>Upgrade (SII-AI) • Cantidad de empresas</label>
+          <input id="m_addCompanies" type="number" min="0" placeholder="Ej: +1" />
+        </div>
+
+        <div class="field">
+          <label>Upgrade (SII-AI) • Extensión en meses</label>
+          <input id="m_addMonths" type="number" min="0" placeholder="Ej: +3" />
+        </div>
+
+        <div class="field" style="grid-column: 1 / -1;">
+          <div class="hintBox">
+            <b>Nota de control:</b> En producción, no almacene contraseñas en texto plano.
+            Utilice cifrado, vault de secretos o tokenización; registre cambios en bitácora.
+          </div>
+        </div>
+      </div>
+
+      <div class="modalFooter">
+        <button class="btn danger" id="btnDelete">Eliminar</button>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn" id="btnCancel">Cancelar</button>
+          <button class="btn primary" id="btnSave">Guardar cambios</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /***************
+     * DEMO DATA
+     ***************/
+    const claveEmpresas = [
+      { id:"ct-1", name:"Comercial Andina SpA", rut:"76.123.456-7", period:"2026-01", status:"pending" },
+      { id:"ct-2", name:"Servicios Delta Ltda.", rut:"77.987.654-3", period:"2026-01", status:"ready" },
+      { id:"ct-3", name:"Inversiones Sur SpA", rut:"78.111.222-5", period:"2026-01", status:"pending" },
+      { id:"ct-4", name:"Transportes Norte EIRL", rut:"76.333.444-9", period:"2026-01", status:"ready" },
+    ];
+
+    const siiaiClientes = [
+      { id:"ai-1", name:"Panadería El Trigo", rut:"12.345.678-9", password:"clave123", plan:"Starter", start:"2026-01-05", end:"2026-04-05", maxCompanies:1 },
+      { id:"ai-2", name:"Constructora Horizonte", rut:"76.555.666-1", password:"SII_2026!", plan:"Pro", start:"2026-01-10", end:"2026-07-10", maxCompanies:3 },
+      { id:"ai-3", name:"Consultora Prisma", rut:"77.888.999-2", password:"prisma#01", plan:"Enterprise", start:"2025-12-15", end:"2026-12-15", maxCompanies:10 },
+    ];
+
+    const activity = [
+      { date:"2026-01-26 10:12", unit:"Clave Tributaria", action:"Generación F29 lote (2 empresas)", result:"OK" },
+      { date:"2026-01-26 11:40", unit:"SII-AI", action:"Upgrade plan (Constructora Horizonte) +2 empresas", result:"OK" },
+      { date:"2026-01-26 13:05", unit:"SII-AI", action:"Cliente por vencer (Panadería El Trigo)", result:"ALERTA" },
+    ];
+
+    /***************
+     * STATE
+     ***************/
+    let currentView = "dashboard";
+    let currentUnit = "clave"; // right segmented
+    let modalContext = { unit:null, id:null };
+
+    /***************
+     * HELPERS
+     ***************/
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => document.querySelectorAll(sel);
+
+    function maskPassword(p){
+      if(!p) return "—";
+      return "•".repeat(Math.min(10, p.length));
+    }
+
+    function statusPill(label, kind){
+      const dot = kind === "good" ? "good" : kind === "warn" ? "warn" : "bad";
+      return `<span class="pill"><span class="dot ${dot}"></span>${label}</span>`;
+    }
+
+    function dateDiffDays(a, b){
+      const da = new Date(a), db = new Date(b);
+      return Math.round((db - da) / (1000*60*60*24));
+    }
+
+    function siiaiStatus(client){
+      const today = new Date("2026-01-26"); // fija para demo (ajústelo a new Date() en producción)
+      const end = new Date(client.end);
+      const days = Math.round((end - today) / (1000*60*60*24));
+      if(days < 0) return { key:"expired", label:"Vencido", kind:"bad" };
+      if(days <= 14) return { key:"expiring", label:`Por vencer (${days}d)`, kind:"warn" };
+      return { key:"active", label:"Activo", kind:"good" };
+    }
+
+    function setTitle(view){
+      const titles = {
+        dashboard: ["Visión General", "Monitoreo ejecutivo y operación diaria. Seleccione unidad y ejecute acciones con trazabilidad."],
+        clave: ["Clave Tributaria", "Gestión de cartera y procesamiento F29 automático con descarga masiva."],
+        siiai: ["SII-AI", "Gestión de clientes, credenciales (seguras) y administración de planes/suscripciones."],
+        auditoria: ["Auditoría", "Registro y trazabilidad de acciones, cambios y ejecuciones."],
+        config: ["Configuración", "Parámetros del sistema, seguridad y control de accesos."]
+      };
+      const t = titles[view] || titles.dashboard;
+      $("#pageTitle").textContent = t[0];
+      $("#pageSubtitle").textContent = t[1];
+    }
+
+    function showView(view){
+      currentView = view;
+
+      // nav active
+      $$(".nav button").forEach(b => b.classList.toggle("active", b.dataset.view === view));
+
+      // show section
+      ["dashboard","clave","siiai","auditoria","config"].forEach(v => {
+        const el = $("#view-" + v);
+        if(el) el.style.display = (v === view) ? "block" : "none";
+      });
+
+      // chip
+      const unitLabel = view === "clave" ? "Clave Tributaria"
+                     : view === "siiai" ? "SII-AI"
+                     : "Consola";
+      $("#activeUnitChip").textContent = `Unidad: ${unitLabel}`;
+
+      setTitle(view);
+    }
+
+    /***************
+     * RENDERERS
+     ***************/
+    function renderDashboard(){
+      $("#kpiClaveEmpresas").textContent = String(claveEmpresas.length);
+      $("#kpiF29Pendientes").textContent = String(claveEmpresas.filter(e => e.status==="pending").length);
+      $("#kpiSiiaiClientes").textContent = String(siiaiClientes.filter(c => siiaiStatus(c).key!=="expired").length);
+
+      $("#activityBody").innerHTML = activity.map(a => {
+        const kind = a.result === "OK" ? "good" : "warn";
+        return `
+          <tr>
+            <td class="mono">${a.date}</td>
+            <td>${a.unit}</td>
+            <td>${a.action}</td>
+            <td>${statusPill(a.result, kind)}</td>
+          </tr>`;
+      }).join("");
+    }
+
+    function renderClaveTable(){
+      const q = ($("#claveSearch").value || "").toLowerCase().trim();
+      const f = $("#claveFilter").value;
+
+      const rows = claveEmpresas.filter(e => {
+        const matchesQ = !q || e.name.toLowerCase().includes(q) || e.rut.toLowerCase().includes(q);
+        const matchesF = (f==="all") || (f==="pending" && e.status==="pending") || (f==="ready" && e.status==="ready");
+        return matchesQ && matchesF;
+      });
+
+      $("#claveTableBody").innerHTML = rows.map(e => {
+        const pill = e.status==="ready"
+          ? statusPill("Listo", "good")
+          : statusPill("Pendiente", "warn");
+
+        return `
+          <tr>
+            <td><input type="checkbox" class="claveSel" data-id="${e.id}" /></td>
+            <td><b>${e.name}</b></td>
+            <td class="mono">${e.rut}</td>
+            <td class="mono">${e.period}</td>
+            <td>${pill}</td>
+            <td>
+              <div class="rowActions">
+                <button class="btn" data-action="preview" data-id="${e.id}">Ver</button>
+                <button class="btn primary" data-action="run" data-id="${e.id}">Procesar</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("") || `
+        <tr><td colspan="6" class="muted">Sin resultados para los filtros aplicados.</td></tr>
+      `;
+
+      // bind row buttons
+      $("#claveTableBody").querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.dataset.id;
+          const action = btn.dataset.action;
+          const row = claveEmpresas.find(x => x.id === id);
+          alert(`[DEMO] Acción: ${action.toUpperCase()} | Empresa: ${row.name}`);
+        });
+      });
+    }
+
+    function renderSiiaiTable(){
+      const q = ($("#siiaiSearch").value || "").toLowerCase().trim();
+      const s = $("#siiaiStatus").value;
+
+      const rows = siiaiClientes.filter(c => {
+        const st = siiaiStatus(c).key;
+        const matchesQ = !q || c.name.toLowerCase().includes(q) || c.rut.toLowerCase().includes(q);
+        const matchesS = (s==="all") || (s===st);
+        return matchesQ && matchesS;
+      });
+
+      $("#siiaiTableBody").innerHTML = rows.map(c => {
+        const st = siiaiStatus(c);
+        return `
+          <tr>
+            <td><b>${c.name}</b> <span class="muted">• máx ${c.maxCompanies} emp.</span></td>
+            <td class="mono">${c.rut}</td>
+            <td class="mono">${maskPassword(c.password)}</td>
+            <td><span class="pill">${c.plan}</span></td>
+            <td class="mono">${c.start}</td>
+            <td class="mono">${c.end}</td>
+            <td>${statusPill(st.label, st.kind)}</td>
+            <td>
+              <div class="rowActions">
+                <button class="btn" data-action="edit" data-id="${c.id}">Editar</button>
+                <button class="btn" data-action="upgrade" data-id="${c.id}">Upgrade</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("") || `
+        <tr><td colspan="8" class="muted">Sin resultados para los filtros aplicados.</td></tr>
+      `;
+
+      // bind actions
+      $("#siiaiTableBody").querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.dataset.id;
+          const action = btn.dataset.action;
+          if(action === "edit" || action === "upgrade"){
+            openModal("siiai", id);
+          }else{
+            alert("[DEMO] Acción no implementada.");
+          }
+        });
+      });
+    }
+
+    // Right panel: unidades / lista a la derecha (como pediste)
+    function renderRightPanel(){
+      if(currentUnit === "clave"){
+        $("#rightTitle").textContent = "Clave Tributaria • Empresas";
+        $("#rightHint").textContent = "Contexto: cartera de empresas a las cuales se les genera F29 automático y descarga masiva.";
+        $("#rightList").innerHTML = claveEmpresas.map(e => {
+          const pill = e.status==="ready" ? statusPill("Listo", "good") : statusPill("Pendiente", "warn");
+          return `
+            <div class="item">
+              <div class="info">
+                <div class="name">${e.name}</div>
+                <div class="sub">
+                  <span class="mono">${e.rut}</span>
+                  <span class="mono">Período ${e.period}</span>
+                </div>
+                <div>${pill}</div>
+              </div>
+              <button class="btn" data-unit="clave" data-id="${e.id}">Ver</button>
+            </div>
+          `;
+        }).join("");
+
+        $("#rightList").querySelectorAll("button").forEach(b => {
+          b.addEventListener("click", () => {
+            showView("clave");
+            const row = claveEmpresas.find(x => x.id === b.dataset.id);
+            alert(`[DEMO] Abrir detalle Clave Tributaria: ${row.name}`);
+          });
+        });
+
+      } else {
+        $("#rightTitle").textContent = "SII-AI • Empresas (clientes)";
+        $("#rightHint").textContent = "Contexto: clientes con credenciales, plan contratado, fechas y opción de upgrade (empresas/tiempo).";
+        $("#rightList").innerHTML = siiaiClientes.map(c => {
+          const st = siiaiStatus(c);
+          return `
+            <div class="item">
+              <div class="info">
+                <div class="name">${c.name}</div>
+                <div class="sub">
+                  <span class="mono">${c.rut}</span>
+                  <span class="pill">${c.plan}</span>
+                </div>
+                <div>${statusPill(st.label, st.kind)}</div>
+              </div>
+              <button class="btn primary" data-unit="siiai" data-id="${c.id}">Editar</button>
+            </div>
+          `;
+        }).join("");
+
+        $("#rightList").querySelectorAll("button").forEach(b => {
+          b.addEventListener("click", () => {
+            showView("siiai");
+            openModal("siiai", b.dataset.id);
+          });
+        });
+      }
+    }
+
+    /***************
+     * MODAL (sistema único reutilizable)
+     ***************/
+    function openModal(unit, id){
+      modalContext = { unit, id };
+      const backdrop = $("#modalBackdrop");
+      backdrop.style.display = "flex";
+      backdrop.setAttribute("aria-hidden", "false");
+
+      // Reset upgrade inputs
+      $("#m_addCompanies").value = "";
+      $("#m_addMonths").value = "";
+
+      if(unit === "siiai"){
+        const c = siiaiClientes.find(x => x.id === id);
+        $("#modalTitle").textContent = "Editar cliente (SII-AI)";
+        $("#modalSubtitle").textContent = "Gestión de plan, fechas y credenciales (seguras).";
+        $("#m_unit").value = "SII-AI";
+        $("#m_name").value = c.name || "";
+        $("#m_rut").value = c.rut || "";
+        $("#m_password").value = c.password || "";
+        $("#m_plan").value = c.plan || "";
+        $("#m_start").value = c.start || "";
+        $("#m_end").value = c.end || "";
+        $("#btnDelete").style.display = "inline-flex";
+      } else {
+        const e = claveEmpresas.find(x => x.id === id);
+        $("#modalTitle").textContent = "Detalle empresa (Clave Tributaria)";
+        $("#modalSubtitle").textContent = "Edición administrativa de atributos base (demo).";
+        $("#m_unit").value = "Clave Tributaria";
+        $("#m_name").value = e.name || "";
+        $("#m_rut").value = e.rut || "";
+        $("#m_password").value = "";
+        $("#m_plan").value = "";
+        $("#m_start").value = "";
+        $("#m_end").value = "";
+        $("#btnDelete").style.display = "none";
+      }
+    }
+
+    function closeModal(){
+      const backdrop = $("#modalBackdrop");
+      backdrop.style.display = "none";
+      backdrop.setAttribute("aria-hidden", "true");
+      modalContext = { unit:null, id:null };
+    }
+
+    function applyUpgrade(client, addCompanies, addMonths){
+      if(addCompanies > 0) client.maxCompanies += addCompanies;
+
+      if(addMonths > 0){
+        const end = new Date(client.end);
+        end.setMonth(end.getMonth() + addMonths);
+        const yyyy = end.getFullYear();
+        const mm = String(end.getMonth()+1).padStart(2,"0");
+        const dd = String(end.getDate()).padStart(2,"0");
+        client.end = `${yyyy}-${mm}-${dd}`;
+      }
+    }
+
+    function saveModal(){
+      const { unit, id } = modalContext;
+      if(!unit || !id) return;
+
+      if(unit === "siiai"){
+        const c = siiaiClientes.find(x => x.id === id);
+
+        c.name = $("#m_name").value.trim();
+        c.rut  = $("#m_rut").value.trim();
+        c.password = $("#m_password").value; // DEMO (en producción: no guardar plano)
+        c.plan = $("#m_plan").value;
+        c.start = $("#m_start").value;
+        c.end   = $("#m_end").value;
+
+        const addCompanies = parseInt($("#m_addCompanies").value || "0", 10);
+        const addMonths = parseInt($("#m_addMonths").value || "0", 10);
+        if(addCompanies > 0 || addMonths > 0) applyUpgrade(c, addCompanies, addMonths);
+
+        activity.unshift({
+          date:"2026-01-26 15:00",
+          unit:"SII-AI",
+          action:`Edición/upgrade (demo): ${c.name}`,
+          result:"OK"
+        });
+
+        renderSiiaiTable();
+        renderDashboard();
+        renderRightPanel();
+        closeModal();
+      } else {
+        // DEMO: permitir cambio nombre/rut en Clave Tributaria
+        const e = claveEmpresas.find(x => x.id === id);
+        e.name = $("#m_name").value.trim();
+        e.rut  = $("#m_rut").value.trim();
+
+        activity.unshift({
+          date:"2026-01-26 15:05",
+          unit:"Clave Tributaria",
+          action:`Actualización empresa (demo): ${e.name}`,
+          result:"OK"
+        });
+
+        renderClaveTable();
+        renderDashboard();
+        renderRightPanel();
+        closeModal();
+      }
+    }
+
+    function deleteModal(){
+      const { unit, id } = modalContext;
+      if(unit !== "siiai") return;
+
+      const idx = siiaiClientes.findIndex(x => x.id === id);
+      if(idx >= 0){
+        const name = siiaiClientes[idx].name;
+        siiaiClientes.splice(idx, 1);
+        activity.unshift({
+          date:"2026-01-26 15:10",
+          unit:"SII-AI",
+          action:`Eliminación cliente (demo): ${name}`,
+          result:"OK"
+        });
+      }
+      renderSiiaiTable();
+      renderDashboard();
+      renderRightPanel();
+      closeModal();
+    }
+
+    /***************
+     * EVENTS
+     ***************/
+    $$(".nav button").forEach(btn => {
+      btn.addEventListener("click", () => showView(btn.dataset.view));
+    });
+
+    $("#segClave").addEventListener("click", () => {
+      currentUnit = "clave";
+      $("#segClave").classList.add("active");
+      $("#segSiiai").classList.remove("active");
+      renderRightPanel();
+    });
+    $("#segSiiai").addEventListener("click", () => {
+      currentUnit = "siiai";
+      $("#segSiiai").classList.add("active");
+      $("#segClave").classList.remove("active");
+      renderRightPanel();
+    });
+
+    $("#claveSearch").addEventListener("input", renderClaveTable);
+    $("#claveFilter").addEventListener("change", renderClaveTable);
+
+    $("#siiaiSearch").addEventListener("input", renderSiiaiTable);
+    $("#siiaiStatus").addEventListener("change", renderSiiaiTable);
+
+    $("#btnSelectAllClave").addEventListener("click", () => {
+      const boxes = $$(".claveSel");
+      const allChecked = Array.from(boxes).every(b => b.checked);
+      boxes.forEach(b => b.checked = !allChecked);
+    });
+
+    $("#btnGenerateF29").addEventListener("click", () => {
+      const ids = Array.from($$(".claveSel")).filter(b => b.checked).map(b => b.dataset.id);
+      if(ids.length === 0) return alert("Seleccione al menos una empresa para generar F29.");
+      ids.forEach(id => {
+        const e = claveEmpresas.find(x => x.id === id);
+        e.status = "ready";
+      });
+      activity.unshift({
+        date:"2026-01-26 15:20",
+        unit:"Clave Tributaria",
+        action:`Generación F29 lote (demo): ${ids.length} empresas`,
+        result:"OK"
+      });
+      renderClaveTable();
+      renderDashboard();
+      renderRightPanel();
+      alert("[DEMO] Lote generado. (En producción: disparar job + tracking + descarga).");
+    });
+
+    $("#btnDownloadF29").addEventListener("click", () => {
+      const ids = Array.from($$(".claveSel")).filter(b => b.checked).map(b => b.dataset.id);
+      if(ids.length === 0) return alert("Seleccione empresas para descargar masivo.");
+      alert(`[DEMO] Descargar masivo F29 para ${ids.length} empresas.`);
+    });
+
+    $("#btnAddClient").addEventListener("click", () => {
+      const newId = "ai-" + Math.random().toString(16).slice(2, 7);
+      siiaiClientes.unshift({
+        id: newId,
+        name: "Nuevo Cliente (pendiente)",
+        rut: "00.000.000-0",
+        password: "",
+        plan: "Starter",
+        start: "2026-01-26",
+        end: "2026-04-26",
+        maxCompanies: 1
+      });
+      renderSiiaiTable();
+      renderDashboard();
+      renderRightPanel();
+      openModal("siiai", newId);
+    });
+
+    $("#btnBulkUpgrade").addEventListener("click", () => {
+      alert("[DEMO] Upgrade masivo: implemente selección + reglas (empresas/meses) + bitácora.");
+    });
+
+    $("#btnExport").addEventListener("click", () => {
+      alert("[DEMO] Exportar: implemente CSV/XLSX por vista y filtros aplicados.");
+    });
+
+    $("#btnQuickAction").addEventListener("click", () => {
+      alert("[DEMO] Acción rápida: sugerido (Clave) ejecutar lote F29 pendientes / (SII-AI) listar por vencer 14 días.");
+    });
+
+    // Modal events
+    $("#btnCloseModal").addEventListener("click", closeModal);
+    $("#btnCancel").addEventListener("click", closeModal);
+    $("#btnSave").addEventListener("click", saveModal);
+    $("#btnDelete").addEventListener("click", deleteModal);
+
+    $("#modalBackdrop").addEventListener("click", (e) => {
+      if(e.target === $("#modalBackdrop")) closeModal();
+    });
+
+    // INITIAL RENDER
+    renderDashboard();
+    renderClaveTable();
+    renderSiiaiTable();
+    renderRightPanel();
+  </script>
+</body>
+</html>

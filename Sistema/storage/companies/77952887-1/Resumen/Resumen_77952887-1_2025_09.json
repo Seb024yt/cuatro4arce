@@ -1,0 +1,78 @@
+{
+  "company": "MCF INGENIERÍA Y CONSTRUCCIÓN SPA",
+  "period": {
+    "year": 2025,
+    "month": 9
+  },
+  "ventas": {
+    "items": [
+      {
+        "concepto": "Factura electronica",
+        "neto": 79302415,
+        "iva": 15067459,
+        "total": 94369874,
+        "code": 33
+      },
+      {
+        "concepto": "Nota de credito electronica",
+        "neto": -1948000,
+        "iva": -370120,
+        "total": -2318120,
+        "code": 61
+      }
+    ],
+    "total": {
+      "neto": 77354415,
+      "iva": 14697339,
+      "total": 92051754
+    }
+  },
+  "compras": {
+    "items": [
+      {
+        "concepto": "Factura electronica",
+        "neto": 62721019,
+        "iva": 11914854,
+        "total": 74918560,
+        "code": 33
+      },
+      {
+        "concepto": "Factura exenta / no afecta",
+        "neto": 1679194,
+        "iva": 0,
+        "total": 1679194,
+        "code": 34
+      },
+      {
+        "concepto": "Nota de credito electronica",
+        "neto": -125064,
+        "iva": 0,
+        "total": -125064,
+        "code": 61
+      }
+    ],
+    "total": {
+      "neto": 64275149,
+      "iva": 11914854,
+      "total": 76472690
+    },
+    "remanente": null
+  },
+  "ppm": {
+    "base": 77354415,
+    "factor": 0.00125,
+    "pagado": 96693
+  },
+  "honorarios": {
+    "bruto": 1315789,
+    "retenido": 190789,
+    "pagado": 1125000
+  },
+  "impuesto_unico": 0,
+  "totales": {
+    "iva_debito": 14697339,
+    "iva_credito": 11914854,
+    "iva_pagar_determinado": 2782485,
+    "total_a_pagar": 3069967
+  }
+}

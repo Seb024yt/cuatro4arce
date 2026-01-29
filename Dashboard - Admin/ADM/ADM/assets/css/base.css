@@ -1,0 +1,12 @@
+*{ box-sizing: border-box; }
+    html, body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(900px 500px at 20% 15%, rgba(124,58,237,.35), transparent 60%),
+        radial-gradient(900px 520px at 80% 20%, rgba(34,211,238,.25), transparent 60%),
+        radial-gradient(900px 600px at 50% 90%, rgba(255,255,255,.08), transparent 60%),
+        var(--bg);
+    }

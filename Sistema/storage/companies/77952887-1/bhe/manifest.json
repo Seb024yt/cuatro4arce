@@ -1,0 +1,86 @@
+{
+  "bhe": {
+    "2026": {
+      "01": {
+        "url": "https://loa.sii.cl/cgi_IMT/TMBCOC_InformeMensualBheRec.cgi?cbanoinformemensual=2026&cbmesinformemensual=01&dv_arrastre=1&pagina_solicitada=0&rut_arrastre=77952887",
+        "html": "storage\\companies\\77952887-1\\bhe\\2026\\01\\BHE_202601.html",
+        "xls": null,
+        "png": null
+      }
+    },
+    "2025": {
+      "01": {
+        "url": "https://loa.sii.cl/cgi_IMT/TMBCOC_InformeMensualBheRec.cgi?cbanoinformemensual=2025&cbmesinformemensual=01&dv_arrastre=1&pagina_solicitada=0&rut_arrastre=77952887",
+        "html": "storage\\companies\\77952887-1\\bhe\\2025\\01\\BHE_202501.html",
+        "xls": null,
+        "png": null
+      },
+      "02": {
+        "url": "https://loa.sii.cl/cgi_IMT/TMBCOC_InformeMensualBheRec.cgi?cbanoinformemensual=2025&cbmesinformemensual=02&dv_arrastre=1&pagina_solicitada=0&rut_arrastre=77952887",
+        "html": "storage\\companies\\77952887-1\\bhe\\2025\\02\\BHE_202502.html",
+        "xls": null,
+        "png": null
+      },
+      "03": {
+        "url": "https://loa.sii.cl/cgi_IMT/TMBCOC_InformeMensualBheRec.cgi?cbanoinformemensual=2025&cbmesinformemensual=03&dv_arrastre=1&pagina_solicitada=0&rut_arrastre=77952887",
+        "html": "storage\\companies\\77952887-1\\bhe\\2025\\03\\BHE_202503.html",
+        "xls": null,
+        "png": null
+      },
+      "04": {
+        "url": "https://loa.sii.cl/cgi_IMT/TMBCOC_InformeMensualBheRec.cgi?cbanoinformemensual=2025&cbmesinformemensual=04&dv_arrastre=1&pagina_solicitada=0&rut_arrastre=77952887",
+        "html": "storage\\companies\\77952887-1\\bhe\\2025\\04\\BHE_202504.html",
+        "xls": null,
+        "png": null
+      },
+      "05": {
+        "url": "https://loa.sii.cl/cgi_IMT/TMBCOC_InformeMensualBheRec.cgi?cbanoinformemensual=2025&cbmesinformemensual=05&dv_arrastre=1&pagina_solicitada=0&rut_arrastre=77952887",
+        "html": "storage\\companies\\77952887-1\\bhe\\2025\\05\\BHE_202505.html",
+        "xls": null,
+        "png": null
+      },
+      "06": {
+        "url": "https://loa.sii.cl/cgi_IMT/TMBCOC_InformeMensualBheRec.cgi?cbanoinformemensual=2025&cbmesinformemensual=06&dv_arrastre=1&pagina_solicitada=0&rut_arrastre=77952887",
+        "html": "storage\\companies\\77952887-1\\bhe\\2025\\06\\BHE_202506.html",
+        "xls": null,
+        "png": null
+      },
+      "07": {
+        "url": "https://loa.sii.cl/cgi_IMT/TMBCOC_InformeMensualBheRec.cgi?cbanoinformemensual=2025&cbmesinformemensual=07&dv_arrastre=1&pagina_solicitada=0&rut_arrastre=77952887",
+        "html": "storage\\companies\\77952887-1\\bhe\\2025\\07\\BHE_202507.html",
+        "xls": null,
+        "png": null
+      },
+      "08": {
+        "url": "https://loa.sii.cl/cgi_IMT/TMBCOC_InformeMensualBheRec.cgi?cbanoinformemensual=2025&cbmesinformemensual=08&dv_arrastre=1&pagina_solicitada=0&rut_arrastre=77952887",
+        "html": "storage\\companies\\77952887-1\\bhe\\2025\\08\\BHE_202508.html",
+        "xls": null,
+        "png": null
+      },
+      "09": {
+        "url": "https://loa.sii.cl/cgi_IMT/TMBCOC_InformeMensualBheRec.cgi?cbanoinformemensual=2025&cbmesinformemensual=09&dv_arrastre=1&pagina_solicitada=0&rut_arrastre=77952887",
+        "html": "storage\\companies\\77952887-1\\bhe\\2025\\09\\BHE_202509.html",
+        "xls": null,
+        "png": null
+      },
+      "10": {
+        "url": "https://loa.sii.cl/cgi_IMT/TMBCOC_InformeMensualBheRec.cgi?cbanoinformemensual=2025&cbmesinformemensual=10&dv_arrastre=1&pagina_solicitada=0&rut_arrastre=77952887",
+        "html": "storage\\companies\\77952887-1\\bhe\\2025\\10\\BHE_202510.html",
+        "xls": null,
+        "png": null
+      },
+      "11": {
+        "url": "https://loa.sii.cl/cgi_IMT/TMBCOC_InformeMensualBheRec.cgi?cbanoinformemensual=2025&cbmesinformemensual=11&dv_arrastre=1&pagina_solicitada=0&rut_arrastre=77952887",
+        "html": "storage\\companies\\77952887-1\\bhe\\2025\\11\\BHE_202511.html",
+        "xls": null,
+        "png": null
+      },
+      "12": {
+        "url": "https://loa.sii.cl/cgi_IMT/TMBCOC_InformeMensualBheRec.cgi?cbanoinformemensual=2025&cbmesinformemensual=12&dv_arrastre=1&pagina_solicitada=0&rut_arrastre=77952887",
+        "html": "storage\\companies\\77952887-1\\bhe\\2025\\12\\BHE_202512.html",
+        "xls": null,
+        "png": null
+      }
+    }
+  }
+}

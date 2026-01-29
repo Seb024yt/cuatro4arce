@@ -1,0 +1,20 @@
+# requirements.txt
+
+fastapi>=0.110
+uvicorn[standard]>=0.27
+
+sqlmodel>=0.0.21
+sqlalchemy>=2.0
+pydantic>=2.6
+
+playwright>=1.45
+python-dotenv>=1.0
+
+requests>=2.31
+
+reportlab>=4.0
+openpyxl>=3.1
+
+xlrd==1.2.0
+
+pandas>=2.2

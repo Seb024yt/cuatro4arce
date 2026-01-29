@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Actividades</title>
+  <meta name="description" content="Compras y ventas con grafico mensual." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #0b1020;
+      --bg2:#0a1633;
+      --card: rgba(255,255,255,.06);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --line: rgba(255,255,255,.12);
+      --brand: #7c5cff;
+      --brand2:#35d0ff;
+      --good:#2ee59d;
+      --warn:#ffd166;
+      --bad:#ff5c7a;
+      --shadow: 0 18px 60px rgba(0,0,0,.35);
+      --r-xl: 22px;
+      --r-lg: 18px;
+      --gap: 18px;
+      --max: 1380px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    html{
+      background:
+        radial-gradient(900px 480px at 10% 10%, rgba(124,92,255,.32), transparent 55%),
+        radial-gradient(900px 480px at 90% 20%, rgba(53,208,255,.24), transparent 55%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      background-attachment: fixed;
+    }
+    body{
+      margin:0;
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 180%;
+      color: var(--text);
+      background: transparent;
+      overflow-x: hidden;
+    }
+
+    .main{
+      padding: 18px 12px 32px;
+    }
+    .wrap{
+      max-width: var(--max);
+      margin: 0 auto;
+      display:flex;
+      flex-direction:column;
+      gap: var(--gap);
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: var(--r-xl);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      backdrop-filter: blur(10px);
+    }
+    .topbar .left{
+      display:flex;
+      flex-direction:column;
+      gap: 2px;
+    }
+    .topbar .title{
+      margin:0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .topbar .subtitle{
+      margin:0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .filters{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .reveal{
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity .5s ease, transform .5s ease;
+      will-change: opacity, transform;
+    }
+    .reveal.is-visible{
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .load-line{
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      pointer-events: none;
+      background: linear-gradient(90deg, transparent, rgba(53,208,255,.15), rgba(124,92,255,.85), rgba(53,208,255,.15), transparent);
+      filter: blur(2.5px);
+      transform: scaleX(0);
+      transform-origin: center;
+      animation: load-line 1.4s ease forwards;
+      z-index: 999;
+    }
+    @keyframes load-line{
+      0%{ transform: scaleX(0); opacity: 0; filter: blur(6px); }
+      60%{ transform: scaleX(1); opacity: .95; filter: blur(1.5px); }
+      100%{ opacity: 0; filter: blur(0); }
+    }
+    .chip{
+      font-size: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--muted);
+      background: rgba(0,0,0,.12);
+      white-space: nowrap;
+    }
+    .btn{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 14px;
+      cursor: pointer;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: var(--gap);
+    }
+    .card{
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: var(--r-xl);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .kpi{
+      grid-column: span 4;
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+    }
+    .kpi .label{
+      font-size: 12px;
+      color: var(--muted);
+      margin:0;
+    }
+    .kpi .value{
+      margin:0;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+    .kpi .delta{
+      font-size: 12px;
+      color: var(--good);
+    }
+
+    .chart-card{
+      grid-column: span 8;
+      min-height: 320px;
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+    }
+    .chart{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 10px;
+      align-items:end;
+      height: 220px;
+      padding: 10px 6px 6px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.14);
+    }
+    .bar{
+      height: 100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-end;
+      gap: 6px;
+    }
+    .bar span{
+      width: 100%;
+      height: var(--h, 40%);
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(124,92,255,.9), rgba(53,208,255,.7));
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .bar .val{
+      font-size: 10px;
+      color: rgba(255,255,255,.9);
+      font-style: normal;
+      line-height: 1.1;
+    }
+    .bar b{
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .side-card{
+      grid-column: span 4;
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+      min-height: 320px;
+    }
+    .legend{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .chip.sales{
+      color: rgba(53,208,255,.95);
+      border-color: rgba(53,208,255,.4);
+      background: rgba(53,208,255,.12);
+    }
+    .chip.purchases{
+      color: rgba(124,92,255,.95);
+      border-color: rgba(124,92,255,.4);
+      background: rgba(124,92,255,.12);
+    }
+    .chip.peak{
+      color: rgba(255,209,102,.95);
+      border-color: rgba(255,209,102,.45);
+      background: rgba(255,209,102,.12);
+    }
+    .legend .dot{
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--good);
+      box-shadow: 0 0 0 6px rgba(46,229,157,.12);
+    }
+    .legend .dot.warn{ background: var(--warn); box-shadow: 0 0 0 6px rgba(255,209,102,.12); }
+
+    .table{
+      width: 100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .table th, .table td{
+      padding: 12px 12px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .table th{
+      text-align:left;
+      color: rgba(255,255,255,.82);
+      background: rgba(0,0,0,.14);
+      font-weight: 700;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .pill .s{
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--good);
+    }
+    .pill.bad .s{ background: var(--bad); }
+
+    @media (max-width: 980px){
+      .kpi{ grid-column: span 6; }
+      .chart-card{ grid-column: span 12; }
+      .side-card{ grid-column: span 12; }
+    }
+    @media (max-width: 560px){
+      .kpi{ grid-column: span 12; }
+      .topbar{ flex-direction: column; align-items:flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="load-line" aria-hidden="true"></div>
+  <main class="main">
+    <div class="wrap">
+      <header class="topbar">
+        <div class="left">
+          <p class="title">Actividades</p>
+          <p class="subtitle">Compras y ventas con seguimiento mensual</p>
+        </div>
+        <div class="filters">
+          <span class="chip">Año 2026</span>
+          <span class="chip">Sucursal central</span>
+          <button class="btn" type="button">Exportar</button>
+        </div>
+      </header>
+
+      <section class="grid" aria-label="Indicadores">
+        <article class="card kpi">
+          <p class="label">Ventas acumuladas</p>
+          <p class="value">$ 3.220.540</p>
+          <span class="delta">----------------------------</span>
+        </article>
+        <article class="card kpi">
+          <p class="label">Compras acumuladas</p>
+          <p class="value">$ 2.174.980</p>
+          <span class="delta" style="color: var(--warn);">----------------------------</span>
+        </article>
+        <article class="card kpi">
+          <p class="label">Margen estimado</p>
+          <p class="value">$  1.045.560</p>
+          <span class="delta">----------------------------</span>
+        </article>
+
+        <section class="card chart-card" aria-label="Ventas por mes">
+          <div style="display:flex; align-items:center; justify-content: space-between; gap: 12px;">
+            <h2 style="margin:0; font-size: 14px;">Ventas por mes</h2>
+            <span class="chip">2026</span>
+          </div>
+          <div class="chart" role="img" aria-label="Grafico de barras mensual de ventas">
+            <div class="bar" style="--h: 48%"><em class="val"> 3.220.540</em><span></span><b>Ene</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Feb</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Mar</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Abr</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>May</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Jun</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Jul</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Ago</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Sep</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Oct</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Nov</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Dic</b></div>
+          </div>
+        </section>
+
+        <aside class="card side-card" aria-label="Ultimas ventas">
+          <h2 style="margin:0; font-size: 14px;">Ultimas ventas</h2>
+          <table class="table" aria-describedby="ventasInfo">
+            <caption id="ventasInfo" style="caption-side: bottom; padding: 10px 4px 0; font-size: 12px; color: var(--muted);">
+              Movimientos de ventas recientes.
+            </caption>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2026-01-24</td>
+                <td>Retail Sur</td>
+                <td>$ 1.240.000</td>
+              </tr>
+              <tr>
+                <td>2026-01-21</td>
+                <td>Mayorista Norte</td>
+                <td>$ 980.000</td>
+              </tr>
+              <tr>
+                <td>2026-01-19</td>
+                <td>Canal Online</td>
+                <td>$ 650.000</td>
+              </tr>
+            </tbody>
+          </table>
+        </aside>
+
+
+        <section class="card chart-card" aria-label="Compras por mes">
+          <div style="display:flex; align-items:center; justify-content: space-between; gap: 12px;">
+            <h2 style="margin:0; font-size: 14px;">Compras por mes</h2>
+            <span class="chip">2026</span>
+          </div>
+          <div class="chart" role="img" aria-label="Grafico de barras mensual">
+            <div class="bar" style="--h: 38%"><em class="val"> 2.174.980</em><span></span><b>Ene</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Feb</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Mar</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Abr</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>May</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Jun</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Jul</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Ago</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Sep</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Oct</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Nov</b></div>
+            <div class="bar" style="--h: 0%"><span></span><b>Dic</b></div>
+          </div>
+        </section>
+
+        <aside class="card side-card" aria-label="Ultimas compras">
+          <h2 style="margin:0; font-size: 14px;">Ultimas compras</h2>
+          <table class="table" aria-describedby="comprasInfo">
+            <caption id="comprasInfo" style="caption-side: bottom; padding: 10px 4px 0; font-size: 12px; color: var(--muted);">
+              Movimientos de compras recientes.
+            </caption>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Proveedor</th>
+                <th>Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2026-01-23</td>
+                <td>Logistica Andes</td>
+                <td>$ 420.650</td>
+              </tr>
+              <tr>
+                <td>2026-01-22</td>
+                <td>Servicios Cloud</td>
+                <td>$ 190.300</td>
+              </tr>
+              <tr>
+                <td>2026-01-20</td>
+                <td>Distribuidora Sur</td>
+                <td>$ 260.000</td>
+              </tr>
+            </tbody>
+          </table>
+        </aside>
+
+        <section class="card" style="grid-column: span 12;">
+          <h2 style="margin:0 0 10px; font-size: 14px;">Resumen por categoria</h2>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Categoria</th>
+                <th>Compras</th>
+                <th>Ventas</th>
+                <th>Margen</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Insumos</td>
+                <td>$ 4.240.000</td>
+                <td>$ 6.180.000</td>
+                <td>$ 1.940.000</td>
+              </tr>
+              <tr>
+                <td>Servicios</td>
+                <td>$ 2.950.000</td>
+                <td>$ 4.200.000</td>
+                <td>$ 1.250.000</td>
+              </tr>
+              <tr>
+                <td>Logistica</td>
+                <td>$ 1.320.000</td>
+                <td>$ 2.540.000</td>
+                <td>$ 1.220.000</td>
+              </tr>
+              <tr>
+                <td>Otros</td>
+                <td>$ 920.000</td>
+                <td>$ 1.780.000</td>
+                <td>$ 860.000</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const revealItems = document.querySelectorAll('.topbar, .card');
+    revealItems.forEach((el, i) => {
+      el.classList.add('reveal');
+      el.style.transitionDelay = `${i * 80}ms`;
+    });
+    requestAnimationFrame(() => {
+      revealItems.forEach(el => el.classList.add('is-visible'));
+    });
+  </script>
+</body>
+</html>

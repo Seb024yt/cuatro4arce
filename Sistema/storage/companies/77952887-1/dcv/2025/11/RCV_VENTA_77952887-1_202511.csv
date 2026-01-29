@@ -1,0 +1,17 @@
+Nro;Tipo Doc;Tipo Venta;Rut cliente;Razon Social;Folio;Fecha Docto;Fecha Recepcion;Fecha Acuse Recibo;Fecha Reclamo;Monto Exento;Monto Neto;Monto IVA;Monto total;IVA Retenido Total;IVA Retenido Parcial;IVA no retenido;IVA propio;IVA Terceros;RUT Emisor Liquid. Factura;Neto Comision Liquid. Factura;Exento Comision Liquid. Factura;IVA Comision Liquid. Factura;IVA fuera de plazo;Tipo Docto. Referencia;Folio Docto. Referencia;Num. Ident. Receptor Extranjero;Nacionalidad Receptor Extranjero;Credito empresa constructora;Impto. Zona Franca (Ley 18211);Garantia Dep. Envases;Indicador Venta sin Costo;Indicador Servicio Periodico;Monto No facturable;Total Monto Periodo;Venta Pasajes Transporte Nacional;Venta Pasajes Transporte Internacional;Numero Interno;Codigo Sucursal;NCE o NDE sobre Fact. de Compra;Codigo Otro Imp.;Valor Otro Imp.;Tasa Otro Imp.
+1;33;Del Giro;99597170-4;DOMINION SPA;82;11/11/2025;11/11/2025 13:55:22;;;0;304038;57767;361805;0;0;0;0;0;-;0;0;0;0;0;;;;0;;0;2;0;0;0;;;;90438277;;;;;
+2;33;Del Giro;99597170-4;DOMINION SPA;83;11/11/2025;11/11/2025 14:03:20;;;0;850346;161566;1011912;0;0;0;0;0;-;0;0;0;0;0;;;;0;;0;2;0;0;0;;;;90438277;;;;;
+3;33;Del Giro;99597170-4;DOMINION SPA;84;11/11/2025;11/11/2025 14:16:52;;;0;175064;33262;208326;0;0;0;0;0;-;0;0;0;0;0;;;;0;;0;2;0;0;0;;;;90438277;;;;;
+4;33;Del Giro;99597170-4;DOMINION SPA;85;11/11/2025;11/11/2025 14:22:38;;;0;29837682;5669160;35506842;0;0;0;0;0;-;0;0;0;0;0;;;;0;;0;2;0;0;0;;;;90438277;;;;;
+5;33;Del Giro;99597170-4;DOMINION SPA;86;11/11/2025;11/11/2025 14:26:17;;;0;825514;156848;982362;0;0;0;0;0;-;0;0;0;0;0;;;;0;;0;2;0;0;0;;;;90438277;;;;;
+6;33;Del Giro;99597170-4;DOMINION SPA;87;11/11/2025;11/11/2025 14:29:57;;;0;341714;64926;406640;0;0;0;0;0;-;0;0;0;0;0;;;;0;;0;2;0;0;0;;;;90438277;;;;;
+7;33;Del Giro;99597170-4;DOMINION SPA;88;11/11/2025;11/11/2025 14:32:46;;;0;5380542;1022303;6402845;0;0;0;0;0;-;0;0;0;0;0;;;;0;;0;2;0;0;0;;;;90438277;;;;;
+8;33;Del Giro;99597170-4;DOMINION SPA;89;11/11/2025;11/11/2025 14:35:44;;;0;9226607;1753055;10979662;0;0;0;0;0;-;0;0;0;0;0;;;;0;;0;2;0;0;0;;;;90438277;;;;;
+9;33;Del Giro;99597170-4;DOMINION SPA;90;12/11/2025;12/11/2025 11:00:26;;;0;6146234;1167784;7314018;0;0;0;0;0;-;0;0;0;0;0;;;;0;;0;2;0;0;0;;;;90438277;;;;;
+10;33;Del Giro;99597170-4;DOMINION SPA;91;14/11/2025;14/11/2025 08:52:00;;;0;14856624;2822759;17679383;0;0;0;0;0;-;0;0;0;0;0;;;;0;;0;2;0;0;0;;;;90438277;;;;;
+11;33;Del Giro;99597170-4;DOMINION SPA;92;14/11/2025;14/11/2025 08:55:28;;;0;2390354;454167;2844521;0;0;0;0;0;-;0;0;0;0;0;;;;0;;0;2;0;0;0;;;;90438277;;;;;
+12;33;Del Giro;99597170-4;DOMINION SPA;93;14/11/2025;14/11/2025 09:01:12;;;0;2373250;450918;2824168;0;0;0;0;0;-;0;0;0;0;0;;;;0;;0;2;0;0;0;;;;90438277;;;;;
+13;33;Del Giro;99597170-4;DOMINION SPA;94;14/11/2025;14/11/2025 09:05:42;;;0;3769478;716201;4485679;0;0;0;0;0;-;0;0;0;0;0;;;;0;;0;2;0;0;0;;;;90438277;;;;;
+14;33;Del Giro;99597170-4;DOMINION SPA;95;14/11/2025;14/11/2025 09:08:54;;;0;3051599;579804;3631403;0;0;0;0;0;-;0;0;0;0;0;;;;0;;0;2;0;0;0;;;;90438277;;;;;
+15;33;Del Giro;99597170-4;DOMINION SPA;96;18/11/2025;18/11/2025 17:08:25;;;0;2557902;486001;3043903;0;0;0;0;0;-;0;0;0;0;0;;;;0;;0;2;0;0;0;;;;90438277;;;;;
+16;33;Del Giro;76749017-8;ZENER AUSTRAL LIMITADA;97;18/11/2025;18/11/2025 17:30:38;19/11/2025 16:07:37;;0;10746893;2041910;12788803;0;0;0;0;0;-;0;0;0;0;0;;;;0;;0;2;0;0;0;;;;90438277;;;;;

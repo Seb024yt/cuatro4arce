@@ -1,0 +1,26 @@
+{
+  "dcv": {
+    "2025": {
+      "01": {
+        "compras": "storage\\companies\\89752800-2\\dcv\\2025\\01\\RCV_COMPRA_REGISTRO_89752800-2_202501.csv",
+        "ventas_detalles": "storage\\companies\\89752800-2\\dcv\\2025\\01\\RCV_VENTA_89752800-2_202501.csv",
+        "ventas_boletas_linea": "storage\\companies\\89752800-2\\dcv\\2025\\01\\VENTAS_BOLETAS_RESUMEN_202501.csv"
+      },
+      "02": {
+        "compras": "storage\\companies\\89752800-2\\dcv\\2025\\02\\RCV_COMPRA_REGISTRO_89752800-2_202502.csv",
+        "ventas_detalles": "storage\\companies\\89752800-2\\dcv\\2025\\02\\RCV_VENTA_89752800-2_202502.csv",
+        "ventas_boletas_linea": "storage\\companies\\89752800-2\\dcv\\2025\\02\\VENTAS_BOLETAS_RESUMEN_202502.csv"
+      },
+      "03": {
+        "compras": "storage\\companies\\89752800-2\\dcv\\2025\\03\\RCV_COMPRA_REGISTRO_89752800-2_202503.csv",
+        "ventas_detalles": "storage\\companies\\89752800-2\\dcv\\2025\\03\\RCV_VENTA_89752800-2_202503.csv",
+        "ventas_boletas_linea": "storage\\companies\\89752800-2\\dcv\\2025\\03\\VENTAS_BOLETAS_RESUMEN_202503.csv"
+      },
+      "04": {
+        "compras": "storage\\companies\\89752800-2\\dcv\\2025\\04\\RCV_COMPRA_REGISTRO_89752800-2_202504.csv",
+        "ventas_detalles": "storage\\companies\\89752800-2\\dcv\\2025\\04\\RCV_VENTA_89752800-2_202504.csv",
+        "ventas_boletas_linea": "storage\\companies\\89752800-2\\dcv\\2025\\04\\VENTAS_BOLETAS_RESUMEN_202504.csv"
+      }
+    }
+  }
+}

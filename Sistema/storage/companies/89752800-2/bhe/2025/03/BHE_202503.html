@@ -1,0 +1,421 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>INFORME MENSUAL DE BOLETAS RECIBIDAS </title>
+<script src="https://zeus.sii.cl/admin/barranav.js" type="text/javascript">
+</script><script type="text/javascript" src="https://zeus.sii.cl/AUT2000/js/ajaxutils.js"></script>
+<script type="text/javascript" src="https://zeus.sii.cl/AUT2000/js/validaUtil.js"></script>
+<script type="text/javascript" src="https://zeus.sii.cl/admin/js/GLB_links.js"></script>
+<script type="text/javascript" src="https://zeus.sii.cl/admin/js/asistente_calculos_renta.js"></script>
+<script src="https://zeusr.sii.cl/admin/js/encuestas.js"></script>
+
+<link rel="stylesheet" href="/IMT/GLB_estilos.css" type="text/css">
+<script type="text/javascript" src="/IMT/js/overlib_mini.js">/*---*/</script>
+<script type="text/javascript" src="/IMT/js/GLB_links.js"></script>
+<script type="text/javascript" src="/IMT/js/GLB_Util.js">/*---*/</script>
+<script type="text/javascript" src="/IMT/js/GLB_comunas.js">/*---*/</script>
+<script type="text/javascript" src="/IMT/js/TMBCOC_ConsultasContrib.js">/*---*/</script>
+<script type="text/javascript" src="/AUT2000/js/validaUtil.js">/*---*/</script>
+<script type="text/javascript" src="/AUT2000/js/manejaAutenticacion.js"></script>
+
+<script type="text/javascript">
+MAXFILAS=100;
+function tot_pag(max)
+{
+ var tot_pag=1;
+
+ tot_pag = Math.ceil(max/MAXFILAS);
+ return(tot_pag) ;
+}
+
+function listar(pag_solicitada)
+{
+ document.formulario1.CmdXls.value = 'no' ;
+ document.formulario1.action = 'TMBCOC_InformeMensualBheRec.cgi';
+ document.formulario1.pagina_solicitada.value = pag_solicitada;
+ document.formulario1.submit();
+}
+
+function ObtenerBoletaPdf(cod_barra, cod_comuna)
+{
+ document.formulario.txt_codigobarras.value=cod_barra;
+ document.formulario.txt_cod_39.value=Code39(cod_barra,0);
+ document.formulario.txt_descr_comuna.value=obtieneComuna(cod_comuna);
+ document.formulario.action = 'TMBCOT_ConsultaBoletaPdf.cgi';
+ document.formulario.submit();
+}
+
+function VerPlanillaMensualRec()
+{
+ var fecha=new Date();  
+
+ document.formulario1.CmdXls.value = 'Ver_como_planilla' ;
+ document.formulario1.action = 'TMBCOC_InformeMensualBheRec.cgi?dummy=' + fecha.getTime();
+ document.formulario1.submit();
+}
+</script>
+
+<script type="">
+var xml_values = new Array();
+xml_values['nombre_contribuyente']      = "DISTRIBUIDORA DE ARTICULOS MEDICOS PEREZ SPA";
+xml_values['rut_arrastre']              = "89752800";
+xml_values['dv_arrastre']               = "2";
+xml_values['anio_consulta']             = "2025";
+xml_values['mes_consulta']              = "03";
+xml_values['porcentaje_retencion']      = "54";
+xml_values['cant_boletas']              = "10";
+xml_values['total_boletas']             = "10";
+xml_values['pagina_solicitada']         = "1";
+xml_values['pagina_sig_codigo']         = "27075371840246";
+xml_values['pagina_med_codigo']         = "";
+xml_values['pagina_ant_codigo']         = "";
+xml_values['pagina_actual']         = "1";
+xml_values['pagina_lista']         = "00000000000000;";
+
+
+var arr_informe_mensual = new Array();
+CantidadFilas=10;
+
+xml_values['suma_honorarios'] = 0;
+xml_values['suma_retencion_receptor']   =0;     
+xml_values['suma_liquido']              =0;
+
+
+
+arr_informe_mensual['nroboleta_1']            =       "245";
+arr_informe_mensual['rutemisor_1']            =       "7537184";
+arr_informe_mensual['dvemisor_1']             =       "5";
+arr_informe_mensual['nombre_emisor_1']                =       "WILLIAM RUBEN GANDULFO PEREZ ";
+arr_informe_mensual['fecha_boleta_1']         =       "04/03/2025";
+arr_informe_mensual['totalhonorarios_1']      =       formatMiles("3508772",'.');
+arr_informe_mensual['honorariosliquidos_1']   =       formatMiles("3000000",'.');
+arr_informe_mensual['es_soc_profesional_1']   =       "NO";
+arr_informe_mensual['cod_comuna_1']           =       "15105";
+ 
+xml_values['suma_honorarios']                   +=      3508772;
+xml_values['suma_retencion_receptor']           +=      508772;
+xml_values['suma_liquido']                      +=      3000000;
+
+arr_informe_mensual['retencion_receptor_1']   =       formatMiles("508772",'.');
+
+arr_informe_mensual['estado_1']               =       "N";      
+arr_informe_mensual['fechaanulacion_1']               =       " ";        
+arr_informe_mensual['codigobarras_1']         =       "075371840024505D2533";  
+
+
+arr_informe_mensual['nroboleta_2']            =       "13952391";
+arr_informe_mensual['rutemisor_2']            =       "60306045";
+arr_informe_mensual['dvemisor_2']             =       "8";
+arr_informe_mensual['nombre_emisor_2']                =       "CONSERVADOR DE BIENES RAICES D";
+arr_informe_mensual['fecha_boleta_2']         =       "05/03/2025";
+arr_informe_mensual['totalhonorarios_2']      =       formatMiles("2300",'.');
+arr_informe_mensual['honorariosliquidos_2']   =       formatMiles("2300",'.');
+arr_informe_mensual['es_soc_profesional_2']   =       "NO";
+arr_informe_mensual['cod_comuna_2']           =       "13101";
+ 
+xml_values['suma_honorarios']                   +=      2300;
+xml_values['suma_retencion_receptor']           +=      0;
+xml_values['suma_liquido']                      +=      2300;
+
+arr_informe_mensual['retencion_receptor_2']   =       formatMiles("0",'.');
+
+arr_informe_mensual['estado_2']               =       "N";      
+arr_informe_mensual['fechaanulacion_2']               =       " ";        
+arr_informe_mensual['codigobarras_2']         =       "60306045139523914EF2";  
+
+
+arr_informe_mensual['nroboleta_3']            =       "13952393";
+arr_informe_mensual['rutemisor_3']            =       "60306045";
+arr_informe_mensual['dvemisor_3']             =       "8";
+arr_informe_mensual['nombre_emisor_3']                =       "CONSERVADOR DE BIENES RAICES D";
+arr_informe_mensual['fecha_boleta_3']         =       "05/03/2025";
+arr_informe_mensual['totalhonorarios_3']      =       formatMiles("2300",'.');
+arr_informe_mensual['honorariosliquidos_3']   =       formatMiles("2300",'.');
+arr_informe_mensual['es_soc_profesional_3']   =       "NO";
+arr_informe_mensual['cod_comuna_3']           =       "13101";
+ 
+xml_values['suma_honorarios']                   +=      2300;
+xml_values['suma_retencion_receptor']           +=      0;
+xml_values['suma_liquido']                      +=      2300;
+
+arr_informe_mensual['retencion_receptor_3']   =       formatMiles("0",'.');
+
+arr_informe_mensual['estado_3']               =       "N";      
+arr_informe_mensual['fechaanulacion_3']               =       " ";        
+arr_informe_mensual['codigobarras_3']         =       "60306045139523934EF2";  
+
+
+arr_informe_mensual['nroboleta_4']            =       "1166";
+arr_informe_mensual['rutemisor_4']            =       "13041205";
+arr_informe_mensual['dvemisor_4']             =       "K";
+arr_informe_mensual['nombre_emisor_4']                =       "JULIETT GLISETT JIMENEZ SAEZ ";
+arr_informe_mensual['fecha_boleta_4']         =       "06/03/2025";
+arr_informe_mensual['totalhonorarios_4']      =       formatMiles("145455",'.');
+arr_informe_mensual['honorariosliquidos_4']   =       formatMiles("120000",'.');
+arr_informe_mensual['es_soc_profesional_4']   =       "NO";
+arr_informe_mensual['cod_comuna_4']           =       "14113";
+ 
+xml_values['suma_honorarios']                   +=      145455;
+xml_values['suma_retencion_receptor']           +=      25455;
+xml_values['suma_liquido']                      +=      120000;
+
+arr_informe_mensual['retencion_receptor_4']   =       formatMiles("25455",'.');
+
+arr_informe_mensual['estado_4']               =       "N";      
+arr_informe_mensual['fechaanulacion_4']               =       " ";        
+arr_informe_mensual['codigobarras_4']         =       "1304120501166F922AA0";  
+
+
+arr_informe_mensual['nroboleta_5']            =       "215";
+arr_informe_mensual['rutemisor_5']            =       "13453067";
+arr_informe_mensual['dvemisor_5']             =       "7";
+arr_informe_mensual['nombre_emisor_5']                =       "MIGUEL ANGEL NILIAN VILLAR ";
+arr_informe_mensual['fecha_boleta_5']         =       "24/03/2025";
+arr_informe_mensual['totalhonorarios_5']      =       formatMiles("23392",'.');
+arr_informe_mensual['honorariosliquidos_5']   =       formatMiles("20000",'.');
+arr_informe_mensual['es_soc_profesional_5']   =       "NO";
+arr_informe_mensual['cod_comuna_5']           =       "13101";
+ 
+xml_values['suma_honorarios']                   +=      23392;
+xml_values['suma_retencion_receptor']           +=      3392;
+xml_values['suma_liquido']                      +=      20000;
+
+arr_informe_mensual['retencion_receptor_5']   =       formatMiles("3392",'.');
+
+arr_informe_mensual['estado_5']               =       "N";      
+arr_informe_mensual['fechaanulacion_5']               =       " ";        
+arr_informe_mensual['codigobarras_5']         =       "13453067002153B76364";  
+
+
+arr_informe_mensual['nroboleta_6']            =       "14027158";
+arr_informe_mensual['rutemisor_6']            =       "60306045";
+arr_informe_mensual['dvemisor_6']             =       "8";
+arr_informe_mensual['nombre_emisor_6']                =       "CONSERVADOR DE BIENES RAICES D";
+arr_informe_mensual['fecha_boleta_6']         =       "24/03/2025";
+arr_informe_mensual['totalhonorarios_6']      =       formatMiles("4600",'.');
+arr_informe_mensual['honorariosliquidos_6']   =       formatMiles("4600",'.');
+arr_informe_mensual['es_soc_profesional_6']   =       "NO";
+arr_informe_mensual['cod_comuna_6']           =       "13101";
+ 
+xml_values['suma_honorarios']                   +=      4600;
+xml_values['suma_retencion_receptor']           +=      0;
+xml_values['suma_liquido']                      +=      4600;
+
+arr_informe_mensual['retencion_receptor_6']   =       formatMiles("0",'.');
+
+arr_informe_mensual['estado_6']               =       "N";      
+arr_informe_mensual['fechaanulacion_6']               =       " ";        
+arr_informe_mensual['codigobarras_6']         =       "603060451402715897EE";  
+
+
+arr_informe_mensual['nroboleta_7']            =       "14027159";
+arr_informe_mensual['rutemisor_7']            =       "60306045";
+arr_informe_mensual['dvemisor_7']             =       "8";
+arr_informe_mensual['nombre_emisor_7']                =       "CONSERVADOR DE BIENES RAICES D";
+arr_informe_mensual['fecha_boleta_7']         =       "24/03/2025";
+arr_informe_mensual['totalhonorarios_7']      =       formatMiles("4600",'.');
+arr_informe_mensual['honorariosliquidos_7']   =       formatMiles("4600",'.');
+arr_informe_mensual['es_soc_profesional_7']   =       "NO";
+arr_informe_mensual['cod_comuna_7']           =       "13101";
+ 
+xml_values['suma_honorarios']                   +=      4600;
+xml_values['suma_retencion_receptor']           +=      0;
+xml_values['suma_liquido']                      +=      4600;
+
+arr_informe_mensual['retencion_receptor_7']   =       formatMiles("0",'.');
+
+arr_informe_mensual['estado_7']               =       "N";      
+arr_informe_mensual['fechaanulacion_7']               =       " ";        
+arr_informe_mensual['codigobarras_7']         =       "603060451402715997EE";  
+
+
+arr_informe_mensual['nroboleta_8']            =       "8";
+arr_informe_mensual['rutemisor_8']            =       "12886603";
+arr_informe_mensual['dvemisor_8']             =       "5";
+arr_informe_mensual['nombre_emisor_8']                =       "WILLIAM ALEXANDER PONCE MORALE";
+arr_informe_mensual['fecha_boleta_8']         =       "26/03/2025";
+arr_informe_mensual['totalhonorarios_8']      =       formatMiles("1064327",'.');
+arr_informe_mensual['honorariosliquidos_8']   =       formatMiles("910000",'.');
+arr_informe_mensual['es_soc_profesional_8']   =       "NO";
+arr_informe_mensual['cod_comuna_8']           =       "14127";
+ 
+xml_values['suma_honorarios']                   +=      1064327;
+xml_values['suma_retencion_receptor']           +=      154327;
+xml_values['suma_liquido']                      +=      910000;
+
+arr_informe_mensual['retencion_receptor_8']   =       formatMiles("154327",'.');
+
+arr_informe_mensual['estado_8']               =       "N";      
+arr_informe_mensual['fechaanulacion_8']               =       " ";        
+arr_informe_mensual['codigobarras_8']         =       "1288660300008B6B6948";  
+
+
+arr_informe_mensual['nroboleta_9']            =       "9";
+arr_informe_mensual['rutemisor_9']            =       "12886603";
+arr_informe_mensual['dvemisor_9']             =       "5";
+arr_informe_mensual['nombre_emisor_9']                =       "WILLIAM ALEXANDER PONCE MORALE";
+arr_informe_mensual['fecha_boleta_9']         =       "26/03/2025";
+arr_informe_mensual['totalhonorarios_9']      =       formatMiles("163743",'.');
+arr_informe_mensual['honorariosliquidos_9']   =       formatMiles("140000",'.');
+arr_informe_mensual['es_soc_profesional_9']   =       "NO";
+arr_informe_mensual['cod_comuna_9']           =       "14127";
+ 
+xml_values['suma_honorarios']                   +=      163743;
+xml_values['suma_retencion_receptor']           +=      23743;
+xml_values['suma_liquido']                      +=      140000;
+
+arr_informe_mensual['retencion_receptor_9']   =       formatMiles("23743",'.');
+
+arr_informe_mensual['estado_9']               =       "N";      
+arr_informe_mensual['fechaanulacion_9']               =       " ";        
+arr_informe_mensual['codigobarras_9']         =       "12886603000091397C55";  
+
+
+arr_informe_mensual['nroboleta_10']            =       "246";
+arr_informe_mensual['rutemisor_10']            =       "7537184";
+arr_informe_mensual['dvemisor_10']             =       "5";
+arr_informe_mensual['nombre_emisor_10']                =       "WILLIAM RUBEN GANDULFO PEREZ ";
+arr_informe_mensual['fecha_boleta_10']         =       "27/03/2025";
+arr_informe_mensual['totalhonorarios_10']      =       formatMiles("3508772",'.');
+arr_informe_mensual['honorariosliquidos_10']   =       formatMiles("3000000",'.');
+arr_informe_mensual['es_soc_profesional_10']   =       "NO";
+arr_informe_mensual['cod_comuna_10']           =       "15105";
+ 
+xml_values['suma_honorarios']                   +=      3508772;
+xml_values['suma_retencion_receptor']           +=      508772;
+xml_values['suma_liquido']                      +=      3000000;
+
+arr_informe_mensual['retencion_receptor_10']   =       formatMiles("508772",'.');
+
+arr_informe_mensual['estado_10']               =       "N";      
+arr_informe_mensual['fechaanulacion_10']               =       " ";        
+arr_informe_mensual['codigobarras_10']         =       "0753718400246625FFA8";  
+</script>
+
+<script charset="utf-8" src="https://siteintercept.qualtrics.com/dxjsmodule/11.f63ef3118b6fa709f80b.chunk.js?Q_CLIENTVERSION=2.41.0&amp;Q_CLIENTTYPE=web&amp;Q_BRANDID=loa.sii.cl"></script><script charset="utf-8" src="https://siteintercept.qualtrics.com/dxjsmodule/7.f9cfd1fa7a002f8bfafd.chunk.js?Q_CLIENTVERSION=2.41.0&amp;Q_CLIENTTYPE=web&amp;Q_BRANDID=loa.sii.cl"></script></head>
+<body link="#003399" onload="initkeys();">
+<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
+<div align="center">
+<center>
+<script type="text/javascript">
+document.write('<TABLE width=900 border=0 cellSpacing=1> <TBODY> <tr> '); 
+document.write('<td align="left">');
+mostrar();
+document.write('<\/TD><\/TR>');
+document.write(' <tr ><TD colspan="2">&nbsp;<\/TD><\/TR> <tr align="left"> <TD colspan="2" align="right"> ');
+document.write('<P align=justify><FONT face=Arial color="#000000" size=4><STRONG>INFORME MENSUAL DE BOLETAS RECIBIDAS');
+document.write('&nbsp;<\/STRONG><\/FONT><FONT face=Arial size=-1><BR> ');
+document.write('En esta p&aacute;gina usted encontrará el detalle de todas las Boletas de Honorarios Electr&oacute;nicas  ');
+document.write('que han sido emitidas a su nombre como receptor de ellas. Además podrá acceder a ver e imprimir el  ');
+document.write('original de la boleta.<\/FONT><\/P><\/TD> ');
+document.write('<\/TR> <tr > <TD  colspan="2"> <HR> <\/TD> ');
+document.write('<\/TR>');
+document.write('<\/table>');
+document.write('<CENTER> <TABLE cellSpacing=1 border=0 width=900> ');
+document.write('<tr align="left"> <TD width=10% > ');
+document.write('<font size="2" face="Arial, Helvetica, sans-serif">Contribuyente:<\/font> ');
+document.write('<\/TD> <TD> ');
+document.write('<font size="2" face="Arial, Helvetica, sans-serif"> <B> ');
+document.write(xml_values['nombre_contribuyente']);
+document.write('<\/B><\/font> <\/TD> <\/TR> <tr align="left"> ');
+document.write('<TD> <font size="2" face="Arial, Helvetica, sans-serif">RUT:<\/font> <\/TD> ');
+document.write('<TD> <font size="2" face="Arial, Helvetica, sans-serif"> <B> ');
+document.write(xml_values['rut_arrastre']+'-'+ xml_values['dv_arrastre']);
+document.write('<\/B><\/font> <\/TD> <\/TR> <tr align="left"><TD colspan="2">&nbsp;<\/TD><\/TR> ');
+document.write('<tr align="CENTER"> <TD colspan="2"> <font size="2" face="Arial, Helvetica, sans-serif"> ');
+document.write(' <B> INFORME CORRESPONDIENTE AL MES ');
+document.write(nombreMes(xml_values['mes_consulta']));
+document.write('  DEL A&Ntilde;O ');
+document.write(xml_values['anio_consulta']);
+document.write('<\/B> <\/font><\/td> <td colSpan="2" class="normal" align="right"> <b> ');
+GLB_tit_pag(tot_pag(xml_values['total_boletas']),xml_values['pagina_solicitada']); 
+document.write(' <\/b> <\/td> <\/tr> <\/table>');
+document.write('<form  name="formulario" method="post" action=""> ');
+CampoOculto("origen","RECIBIDOS");
+CampoOculto("txt_codigobarras","1");
+CampoOculto("veroriginal","si");
+CampoOculto("txt_cod_39","1");
+CampoOculto("txt_descr_comuna","1");
+CampoOculto("nro_boleta","0");
+document.write('<table width="900" border="1" cellspacing="0" cellpadding="1"> ');
+document.write('<tr align="left" bgcolor="#CCCCCC" class="normal"> ');
+document.write('<td colspan="4"><div align="center">Boleta<\/div><\/td> ');
+document.write('<td colspan="3"><div align="center">Emisor<\/div><\/td> ');
+document.write('<td colspan="3"><div align="center">Honorarios<\/div><\/td>');
+document.write('<td colspan="1"><div align="center">Observar<\/div><\/td><\/tr>');
+document.write('<tr align="left" bgcolor="#CCCCCC" class="reporte">  ');
+document.write('<td> <div align="center"><strong>Ver <\/strong><\/div><\/td>');
+document.write('<td> <div align="center">N&deg;<\/div><\/td>');
+document.write('<td> <div align="center">Estado<\/div><\/td>');
+document.write('<td> <div align="center">Fecha<\/div><\/td>');
+document.write('<td> <div align="center">Rut<\/div><\/td>');
+document.write('<td> <div align="center">Nombre o Raz&oacute;n&nbsp;Social<\/div><\/td>');
+document.write('<td> <div align="center">Soc. Prof.<\/div><\/td>   ');
+document.write('<td> <div align="center">Brutos<\/div><\/td> ');
+document.write('<td> <div align="center">Retenido<\/div><\/td> ');
+document.write('<td> <div align="center">Pagado<\/div><\/td>');
+document.write('<td> <div align="center">Boleta<\/div><\/td> <\/tr> ');
+CampoOculto("CantidadFilas",CantidadFilas);  
+if (CantidadFilas < 1 )  document.write('<tr class="reporte"> <td colspan="10"> Sin Datos <\/td> <\/tr> ' );  
+for (i=1;i<=CantidadFilas;i++)
+{
+document.write('<tr align="left" class="reporte">');
+document.write('<td><a href="javascript:ObtenerBoletaPdf(\''+ arr_informe_mensual['codigobarras_'+i] +'\', \''+ arr_informe_mensual['cod_comuna_'+i] +'\');" onmouseover="return overlib(\'Para ver esta boleta, hacer click sobre esta imagen.\', AUTOSTATUS, WRAP);" onmouseout="return nd();"><img src="/IMT/img/pdf.gif" border="0"><\/a><\/td>');
+document.write('<td>'+ arr_informe_mensual['nroboleta_'+i] +'<\/td>');
+
+DisplayMsgEstado(arr_informe_mensual['estado_'+i],arr_informe_mensual['fechaanulacion_'+i]) ;
+
+document.write('<td>'+ arr_informe_mensual['fecha_boleta_'+i] +'<\/td>');
+document.write('<td><nobr>'+ arr_informe_mensual['rutemisor_'+i] +'-'+ arr_informe_mensual['dvemisor_'+i] +'<\/nobr><\/td>');
+document.write('<td>'+ arr_informe_mensual['nombre_emisor_'+i] +'&nbsp;<\/td>');
+document.write('<td><div align="center">'+ arr_informe_mensual['es_soc_profesional_'+i] +'<\/div><\/td>');
+document.write('<td align="right">'+ arr_informe_mensual['totalhonorarios_'+i]+'<\/td>');
+document.write('<td align="right">'+ arr_informe_mensual['retencion_receptor_'+i] +'<\/td>');
+document.write('<td align="right">'+ arr_informe_mensual['honorariosliquidos_'+i] +'<\/td>');
+document.write('<td align="center"><input type="button" value="  IR  " name="chkObservar_'+i+'" class="reporte" onclick="javascript:ValidarObservarMensual('+i+');"><\/td>');
+document.write('<\/tr>');
+}
+document.write('<tr align="left" class="reporte"> <td colspan="7" bgcolor="#CCCCCC" > ');
+document.write('<strong>Totales*&nbsp;:<\/strong><\/td> <td align="right">    ');
+document.write(formatMiles(xml_values['suma_honorarios'],'.'));
+document.write('<\/td> <td align="right"> ');
+document.write(formatMiles(xml_values['suma_retencion_receptor'],'.'));
+document.write('<\/td> <td align="right"> ');
+document.write(formatMiles(xml_values['suma_liquido'],'.')); 
+document.write('<\/td> <td colspan="7" bgcolor="#CCCCCC" > <\/td> <\/tr> <\/table>  ');
+document.write(' <font size="2" face="Arial, Helvetica, sans-serif"> (*) Los valores totales no consideran los montos de las boletas anuladas. <\/font>  ');
+document.write('<\/form> <form name="formulario1" method="post" action=""> ');
+CampoOculto("rut_arrastre",xml_values['rut_arrastre']);
+CampoOculto("dv_arrastre" ,xml_values['dv_arrastre']);
+CampoOculto("cbanoinformemensual" ,xml_values['anio_consulta']);
+CampoOculto("cbmesinformemensual" ,xml_values['mes_consulta']);
+CampoOculto("pagina_solicitada" ,xml_values['pagina_solicitada']);
+CampoOculto("pagina_actual" ,xml_values['pagina_actual']);
+CampoOculto("pagina_ant_codigo" ,xml_values['pagina_ant_codigo']);
+CampoOculto("pagina_med_codigo" ,xml_values['pagina_med_codigo']);
+CampoOculto("pagina_sig_codigo" ,xml_values['pagina_sig_codigo']);
+CampoOculto("pagina_lista" ,xml_values['pagina_lista']);
+CampoOculto("liquido1", xml_values['suma_honorarios']);
+CampoOculto("liquido2", xml_values['suma_retencion_emisor']);
+CampoOculto("liquido3", xml_values['suma_retencion_receptor']);
+CampoOculto("liquido4", xml_values['suma_liquido']);
+CampoOculto("CmdXls", "no");
+document.write('<table width="900" border="0" cellspacing="0" cellpadding="0"> <tr align="center"> ');
+document.write(' <td class="normal" width=20%> ');
+ GLB_sig_pag(tot_pag(xml_values['total_boletas']),xml_values['pagina_solicitada']);
+document.write('<\/td><td class="normal" width=20%>');
+ GLB_ant_pag(tot_pag(xml_values['total_boletas']),xml_values['pagina_solicitada']);
+document.write('<\/td>');
+document.write('<td class="normal" width="20%">  <input type="button"  value="Volver al Menú" onclick="javascript:history.back();"> <\/td>');
+document.write(' <td class="normal" width="30%"> ');
+document.write('<input type="button" name="planilla"  value="Ver informe como planilla electrónica" onclick="javascript:VerPlanillaMensualRec();"> ');
+document.write('<\/td> <td class="normal" width="10%">  ');
+document.write('<a href="#"><\/a> <input type="button" name="CmdImprimir" value="Imprimir" onclick="document:print();"> ');
+document.write('<\/td> <\/tr>  <\/table>  ');
+document.write(' <\/form> <\/TD> <\/TR> <\/TABLE> ');
+document.write('<img src="/IMT/img/pdf.gif" border="0"> <font size="2" face="Arial"> <a href="http://www.sii.cl/pagina/websrelacionados/descargas.htm" onmouseover="return overlib(\'Descargar Adobe Reader para visualizar la Boleta.\', AUTOSTATUS, WRAP);" onmouseout="return nd();" >Descargar Adobe Reader para visualizar la Boleta.<\/a>.  <\/font> ');
+document.write('<\/CENTER> <\/DIV><\/TD> <\/TR> <\/TBODY> <\/TABLE> ');
+</script><table width="900" border="0" cellspacing="1"> <tbody> <tr> <td align="left"><div style="width:950px; height:49px; background-color:#002c48;">   <div id="conAutenticaDatos" style="color:#fff; padding:7px 20px 5px 20px; font-size:14px; font-family:Helvetica Neue,Helvetica,Arial,sans-serif; float:left;"><script type="text/javascript" language="javascript">imprimeRut();</script>Rut: 89752800 - 2</div>   <div id="conAutenticaCerrar" style="border-radius: 13px; color:#ffffff; margin-top:11px; border:1px solid #eb510d;padding:5px 26px;font-size:14px; background-color:#eb510d; margin-right:16px; font-family:Helvetica Neue,Helvetica,Arial,sans-serif; float:right;"><a href="https://zeusr.sii.cl/cgi_AUT2000/autTermino.cgi" style="color:#fff; text-decoration:none;">Cerrar Sesión</a></div></div><div style="width:950px; height:65px; background-color:#ffffff; border-bottom:1px solid #a7a7a7; font-size:22px; font-family:Helvetica Neue,Helvetica,Arial,sans-serif;">   <div style="height:57px; float:left; padding:8px 0px 8px 0px;"><a href="https://homer.sii.cl/"><img src="https://zeus.sii.cl/admin/responsive/images/logo.jpg" style="width:130px; height:47px; border:0;" title="SII - Servicio de Impuestos Internos"></a></div>   <div style="padding:20px 0px 0px 40px; float:right;"><a href="https://www.sii.cl/ayudas/asistencia/contactenos.html" style="text-decoration:none; color:#0061A0;" onmouseover="this.style.color='#eb510d'" onmouseout="this.style.color='#0061A0'">Contacto</a></div>   <div style="padding:20px 0px 0px 40px; float:right;"><a href="https://www.sii.cl/ayudas/" style="text-decoration:none; color:#0061A0;" onmouseover="this.style.color='#eb510d'" onmouseout="this.style.color='#0061A0'">Ayuda</a></div>   <div style="padding:20px 0px 0px 40px; float:right;"><a href="https://www.sii.cl/servicios_online/" style="text-decoration:none; color:#0061A0;" onmouseover="this.style.color='#eb510d'" onmouseout="this.style.color='#0061A0'">Servicios online</a></div>   <div style="padding:20px 0px 0px 40px; float:right;"><a href="https://misiir.sii.cl/cgi_misii/siihome.cgi" style="text-decoration:none; color:#0061A0;" onmouseover="this.style.color='#eb510d'" onmouseout="this.style.color='#0061A0'">Mi SII</a></div></div><div style="clear:both"></div></td></tr> <tr><td colspan="2">&nbsp;</td></tr> <tr align="left"> <td colspan="2" align="right"> <p align="justify"><font face="Arial" color="#000000" size="4"><strong>INFORME MENSUAL DE BOLETAS RECIBIDAS&nbsp;</strong></font><font face="Arial" size="-1"><br> En esta página usted encontrará el detalle de todas las Boletas de Honorarios Electrónicas  que han sido emitidas a su nombre como receptor de ellas. Además podrá acceder a ver e imprimir el  original de la boleta.</font></p></td> </tr> <tr> <td colspan="2"> <hr> </td> </tr></tbody></table><center> <table cellspacing="1" border="0" width="900"> <tbody><tr align="left"> <td width="10%"> <font size="2" face="Arial, Helvetica, sans-serif">Contribuyente:</font> </td> <td> <font size="2" face="Arial, Helvetica, sans-serif"> <b> DISTRIBUIDORA DE ARTICULOS MEDICOS PEREZ SPA</b></font> </td> </tr> <tr align="left"> <td> <font size="2" face="Arial, Helvetica, sans-serif">RUT:</font> </td> <td> <font size="2" face="Arial, Helvetica, sans-serif"> <b> 89752800-2</b></font> </td> </tr> <tr align="left"><td colspan="2">&nbsp;</td></tr> <tr align="CENTER"> <td colspan="2"> <font size="2" face="Arial, Helvetica, sans-serif">  <b> INFORME CORRESPONDIENTE AL MES Marzo  DEL AÑO 2025</b> </font></td> <td colspan="2" class="normal" align="right"> <b>  </b> </td> </tr> </tbody></table><form name="formulario" method="post" action=""> <input type="hidden" name="origen" value="RECIBIDOS"><input type="hidden" name="txt_codigobarras" value="1"><input type="hidden" name="veroriginal" value="si"><input type="hidden" name="txt_cod_39" value="1"><input type="hidden" name="txt_descr_comuna" value="1"><input type="hidden" name="nro_boleta" value="0"><table width="900" border="1" cellspacing="0" cellpadding="1"> <tbody><tr align="left" bgcolor="#CCCCCC" class="normal"> <td colspan="4"><div align="center">Boleta</div></td> <td colspan="3"><div align="center">Emisor</div></td> <td colspan="3"><div align="center">Honorarios</div></td><td colspan="1"><div align="center">Observar</div></td></tr><tr align="left" bgcolor="#CCCCCC" class="reporte">  <td> <div align="center"><strong>Ver </strong></div></td><td> <div align="center">N°</div></td><td> <div align="center">Estado</div></td><td> <div align="center">Fecha</div></td><td> <div align="center">Rut</div></td><td> <div align="center">Nombre o Razón&nbsp;Social</div></td><td> <div align="center">Soc. Prof.</div></td>   <td> <div align="center">Brutos</div></td> <td> <div align="center">Retenido</div></td> <td> <div align="center">Pagado</div></td><td> <div align="center">Boleta</div></td> </tr> <input type="hidden" name="CantidadFilas" value="10"><tr align="left" class="reporte"><td><a href="javascript:ObtenerBoletaPdf('075371840024505D2533', '15105');" onmouseover="return overlib('Para ver esta boleta, hacer click sobre esta imagen.', AUTOSTATUS, WRAP);" onmouseout="return nd();"><img src="/IMT/img/pdf.gif" border="0"></a></td><td>245</td><td><a href="javascript:void(0);" onmouseover="return overlib('Vigente.', CAPTION, 'Estado',AUTOSTATUS, WRAP);" onmouseout="return nd();">VIG</a></td><td>04/03/2025</td><td><nobr>7537184-5</nobr></td><td>WILLIAM RUBEN GANDULFO PEREZ &nbsp;</td><td><div align="center">NO</div></td><td align="right">3.508.772</td><td align="right">508.772</td><td align="right">3.000.000</td><td align="center"><input type="button" value="  IR  " name="chkObservar_1" class="reporte" onclick="javascript:ValidarObservarMensual(1);"></td></tr><tr align="left" class="reporte"><td><a href="javascript:ObtenerBoletaPdf('60306045139523914EF2', '13101');" onmouseover="return overlib('Para ver esta boleta, hacer click sobre esta imagen.', AUTOSTATUS, WRAP);" onmouseout="return nd();"><img src="/IMT/img/pdf.gif" border="0"></a></td><td>13952391</td><td><a href="javascript:void(0);" onmouseover="return overlib('Vigente.', CAPTION, 'Estado',AUTOSTATUS, WRAP);" onmouseout="return nd();">VIG</a></td><td>05/03/2025</td><td><nobr>60306045-8</nobr></td><td>CONSERVADOR DE BIENES RAICES D&nbsp;</td><td><div align="center">NO</div></td><td align="right">2.300</td><td align="right">0</td><td align="right">2.300</td><td align="center"><input type="button" value="  IR  " name="chkObservar_2" class="reporte" onclick="javascript:ValidarObservarMensual(2);"></td></tr><tr align="left" class="reporte"><td><a href="javascript:ObtenerBoletaPdf('60306045139523934EF2', '13101');" onmouseover="return overlib('Para ver esta boleta, hacer click sobre esta imagen.', AUTOSTATUS, WRAP);" onmouseout="return nd();"><img src="/IMT/img/pdf.gif" border="0"></a></td><td>13952393</td><td><a href="javascript:void(0);" onmouseover="return overlib('Vigente.', CAPTION, 'Estado',AUTOSTATUS, WRAP);" onmouseout="return nd();">VIG</a></td><td>05/03/2025</td><td><nobr>60306045-8</nobr></td><td>CONSERVADOR DE BIENES RAICES D&nbsp;</td><td><div align="center">NO</div></td><td align="right">2.300</td><td align="right">0</td><td align="right">2.300</td><td align="center"><input type="button" value="  IR  " name="chkObservar_3" class="reporte" onclick="javascript:ValidarObservarMensual(3);"></td></tr><tr align="left" class="reporte"><td><a href="javascript:ObtenerBoletaPdf('1304120501166F922AA0', '14113');" onmouseover="return overlib('Para ver esta boleta, hacer click sobre esta imagen.', AUTOSTATUS, WRAP);" onmouseout="return nd();"><img src="/IMT/img/pdf.gif" border="0"></a></td><td>1166</td><td><a href="javascript:void(0);" onmouseover="return overlib('Vigente.', CAPTION, 'Estado',AUTOSTATUS, WRAP);" onmouseout="return nd();">VIG</a></td><td>06/03/2025</td><td><nobr>13041205-K</nobr></td><td>JULIETT GLISETT JIMENEZ SAEZ &nbsp;</td><td><div align="center">NO</div></td><td align="right">145.455</td><td align="right">25.455</td><td align="right">120.000</td><td align="center"><input type="button" value="  IR  " name="chkObservar_4" class="reporte" onclick="javascript:ValidarObservarMensual(4);"></td></tr><tr align="left" class="reporte"><td><a href="javascript:ObtenerBoletaPdf('13453067002153B76364', '13101');" onmouseover="return overlib('Para ver esta boleta, hacer click sobre esta imagen.', AUTOSTATUS, WRAP);" onmouseout="return nd();"><img src="/IMT/img/pdf.gif" border="0"></a></td><td>215</td><td><a href="javascript:void(0);" onmouseover="return overlib('Vigente.', CAPTION, 'Estado',AUTOSTATUS, WRAP);" onmouseout="return nd();">VIG</a></td><td>24/03/2025</td><td><nobr>13453067-7</nobr></td><td>MIGUEL ANGEL NILIAN VILLAR &nbsp;</td><td><div align="center">NO</div></td><td align="right">23.392</td><td align="right">3.392</td><td align="right">20.000</td><td align="center"><input type="button" value="  IR  " name="chkObservar_5" class="reporte" onclick="javascript:ValidarObservarMensual(5);"></td></tr><tr align="left" class="reporte"><td><a href="javascript:ObtenerBoletaPdf('603060451402715897EE', '13101');" onmouseover="return overlib('Para ver esta boleta, hacer click sobre esta imagen.', AUTOSTATUS, WRAP);" onmouseout="return nd();"><img src="/IMT/img/pdf.gif" border="0"></a></td><td>14027158</td><td><a href="javascript:void(0);" onmouseover="return overlib('Vigente.', CAPTION, 'Estado',AUTOSTATUS, WRAP);" onmouseout="return nd();">VIG</a></td><td>24/03/2025</td><td><nobr>60306045-8</nobr></td><td>CONSERVADOR DE BIENES RAICES D&nbsp;</td><td><div align="center">NO</div></td><td align="right">4.600</td><td align="right">0</td><td align="right">4.600</td><td align="center"><input type="button" value="  IR  " name="chkObservar_6" class="reporte" onclick="javascript:ValidarObservarMensual(6);"></td></tr><tr align="left" class="reporte"><td><a href="javascript:ObtenerBoletaPdf('603060451402715997EE', '13101');" onmouseover="return overlib('Para ver esta boleta, hacer click sobre esta imagen.', AUTOSTATUS, WRAP);" onmouseout="return nd();"><img src="/IMT/img/pdf.gif" border="0"></a></td><td>14027159</td><td><a href="javascript:void(0);" onmouseover="return overlib('Vigente.', CAPTION, 'Estado',AUTOSTATUS, WRAP);" onmouseout="return nd();">VIG</a></td><td>24/03/2025</td><td><nobr>60306045-8</nobr></td><td>CONSERVADOR DE BIENES RAICES D&nbsp;</td><td><div align="center">NO</div></td><td align="right">4.600</td><td align="right">0</td><td align="right">4.600</td><td align="center"><input type="button" value="  IR  " name="chkObservar_7" class="reporte" onclick="javascript:ValidarObservarMensual(7);"></td></tr><tr align="left" class="reporte"><td><a href="javascript:ObtenerBoletaPdf('1288660300008B6B6948', '14127');" onmouseover="return overlib('Para ver esta boleta, hacer click sobre esta imagen.', AUTOSTATUS, WRAP);" onmouseout="return nd();"><img src="/IMT/img/pdf.gif" border="0"></a></td><td>8</td><td><a href="javascript:void(0);" onmouseover="return overlib('Vigente.', CAPTION, 'Estado',AUTOSTATUS, WRAP);" onmouseout="return nd();">VIG</a></td><td>26/03/2025</td><td><nobr>12886603-5</nobr></td><td>WILLIAM ALEXANDER PONCE MORALE&nbsp;</td><td><div align="center">NO</div></td><td align="right">1.064.327</td><td align="right">154.327</td><td align="right">910.000</td><td align="center"><input type="button" value="  IR  " name="chkObservar_8" class="reporte" onclick="javascript:ValidarObservarMensual(8);"></td></tr><tr align="left" class="reporte"><td><a href="javascript:ObtenerBoletaPdf('12886603000091397C55', '14127');" onmouseover="return overlib('Para ver esta boleta, hacer click sobre esta imagen.', AUTOSTATUS, WRAP);" onmouseout="return nd();"><img src="/IMT/img/pdf.gif" border="0"></a></td><td>9</td><td><a href="javascript:void(0);" onmouseover="return overlib('Vigente.', CAPTION, 'Estado',AUTOSTATUS, WRAP);" onmouseout="return nd();">VIG</a></td><td>26/03/2025</td><td><nobr>12886603-5</nobr></td><td>WILLIAM ALEXANDER PONCE MORALE&nbsp;</td><td><div align="center">NO</div></td><td align="right">163.743</td><td align="right">23.743</td><td align="right">140.000</td><td align="center"><input type="button" value="  IR  " name="chkObservar_9" class="reporte" onclick="javascript:ValidarObservarMensual(9);"></td></tr><tr align="left" class="reporte"><td><a href="javascript:ObtenerBoletaPdf('0753718400246625FFA8', '15105');" onmouseover="return overlib('Para ver esta boleta, hacer click sobre esta imagen.', AUTOSTATUS, WRAP);" onmouseout="return nd();"><img src="/IMT/img/pdf.gif" border="0"></a></td><td>246</td><td><a href="javascript:void(0);" onmouseover="return overlib('Vigente.', CAPTION, 'Estado',AUTOSTATUS, WRAP);" onmouseout="return nd();">VIG</a></td><td>27/03/2025</td><td><nobr>7537184-5</nobr></td><td>WILLIAM RUBEN GANDULFO PEREZ &nbsp;</td><td><div align="center">NO</div></td><td align="right">3.508.772</td><td align="right">508.772</td><td align="right">3.000.000</td><td align="center"><input type="button" value="  IR  " name="chkObservar_10" class="reporte" onclick="javascript:ValidarObservarMensual(10);"></td></tr><tr align="left" class="reporte"> <td colspan="7" bgcolor="#CCCCCC"> <strong>Totales*&nbsp;:</strong></td> <td align="right">    8.428.261</td> <td align="right"> 1.224.461</td> <td align="right"> 7.203.800</td> <td colspan="7" bgcolor="#CCCCCC"> </td> </tr> </tbody></table>   <font size="2" face="Arial, Helvetica, sans-serif"> (*) Los valores totales no consideran los montos de las boletas anuladas. </font>  </form> <form name="formulario1" method="post" action=""> <input type="hidden" name="rut_arrastre" value="89752800"><input type="hidden" name="dv_arrastre" value="2"><input type="hidden" name="cbanoinformemensual" value="2025"><input type="hidden" name="cbmesinformemensual" value="03"><input type="hidden" name="pagina_solicitada" value="1"><input type="hidden" name="pagina_actual" value="1"><input type="hidden" name="pagina_sig_codigo" value="27075371840246"><input type="hidden" name="pagina_lista" value="00000000000000;"><input type="hidden" name="liquido1" value="8428261"><input type="hidden" name="liquido3" value="1224461"><input type="hidden" name="liquido4" value="7203800"><input type="hidden" name="CmdXls" value="no"><table width="900" border="0" cellspacing="0" cellpadding="0"> <tbody><tr align="center">  <td class="normal" width="20%">  <p>&nbsp;&nbsp;  </p></td><td class="normal" width="20%"> <p>&nbsp;&nbsp; </p></td><td class="normal" width="20%">  <input type="button" value="Volver al Menú" onclick="javascript:history.back();"> </td> <td class="normal" width="30%"> <input type="button" name="planilla" value="Ver informe como planilla electrónica" onclick="javascript:VerPlanillaMensualRec();"> </td> <td class="normal" width="10%">  <a href="#"></a> <input type="button" name="CmdImprimir" value="Imprimir" onclick="document:print();"> </td> </tr>  </tbody></table>   </form>    <img src="/IMT/img/pdf.gif" border="0"> <font size="2" face="Arial"> <a href="http://www.sii.cl/pagina/websrelacionados/descargas.htm" onmouseover="return overlib('Descargar Adobe Reader para visualizar la Boleta.', AUTOSTATUS, WRAP);" onmouseout="return nd();">Descargar Adobe Reader para visualizar la Boleta.</a>.  </font> </center> </center></div>    
+
+
+
+<script type="text/javascript" src="https://zn7apd3ds8wfwx8xl-siichile.siteintercept.qualtrics.com/SIE/?Q_ZID=ZN_7apD3Ds8WFWx8XL"></script><div id="ZN_7apD3Ds8WFWx8XL"></div></body></html>
